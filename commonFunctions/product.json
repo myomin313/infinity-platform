@@ -1,0 +1,13 @@
+[
+  { "id": 1, "name": "Penetration Testing", "tab": "penetration"},
+  { "id": 2, "name": "Managed Risk", "tab": "risk" },
+  { "id": 3, "name": "Managed Security Journey", "tab": "security_journey"},
+  { "id": 4, "name": "Incident Response", "tab": "incident"},
+  { "id": 5, "name": "DevSecOps", "tab": "devsecops"},
+  { "id": 6, "name": "Vulnerability Management", "tab":"vulnerability"  },
+  { "id": 7, "name": "Managed Detection And Response", "tab":"detection"  },
+  { "id": 8, "name": "Cyber Security Posture Management", "tab":"cybersecurity"  },
+  { "id": 9, "name": "Managed Security Services", "tab":"securityservice"  },
+  { "id": 10, "name": "Threat Hunting", "tab":"threathunting"  },
+  { "id": 11, "name": "Cybersecurity Operation Center", "tab":"operationcenter"  }
+]

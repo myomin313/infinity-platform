@@ -1,0 +1,117 @@
+[{
+    "title": "Enterprise",
+    "subtitle": "Managed Threat detection & Response",
+    "features": [
+      "Accelerate and scale up your threat detection & response",
+      "Automate threat detection & response",
+      "AI powered detection dynamic workloads",
+      "Data visualisation for entire IT landscape",
+      "Scalable platform hybrid",
+      "Full Customization",
+      "Remote Monitor",
+      "Monthly Report",
+      "24/7 - Priority Support"
+    ],
+    "price": 750,
+    "currency": "€",
+    "billing": "per month, billed annually",
+    "color": "blue",
+    "recommended": false
+  },
+  {
+    "title": "Enterprise",
+    "subtitle": "Managed Threat detection & Response  Network Performance Observability",
+    "features": [
+      "Threat detection & monitoring entire infrastructure",
+      "Deploy in hybrid environment",
+      "Automated registration for any loads",
+      "Push and pull agents",
+      "Data loss protection",
+      "Visualisation infrastructure",
+      "Scalable platform hybrid",
+      "Full Customization",
+      "Remote Monitor",
+      "Weekly and Monthly Report",
+      "24/7 - Priority Support"
+    ],
+    "price": 1416,
+    "currency": "€",
+    "billing": "per month, billed annually",
+    "color": "green",
+    "recommended": true
+  },
+  {
+    "title": "Enterprise",
+    "subtitle": "Network Performance Observability",
+    "features": [
+      "Accelerate and scale up your threat detection & response",
+      "Automate threat detection & response",
+      "AI powered detection dynamic workloads",
+      "Data visualisation for entire IT landscape",
+      "Scalable platform hybrid",
+      "Full Customization",
+      "Remote Monitor",
+      "Monthly Report",
+      "24/7 - Priority Support"
+    ],
+    "price": 750,
+    "currency": "€",
+    "billing": "per month, billed annually",
+    "color": "orange",
+    "recommended": false
+  },{
+    "title": "Enterprise",
+    "subtitle": "Managed Threat detection & Response",
+    "features": [
+     "A Real-Time monitoring on Dashboards",
+      "Accelerate and scale up your threat detection & response",
+      "Automate threat detection & response",
+      "AI powered detection dynamic workloads",
+      "Data visualisation for entire IT landscape",
+      "Scalable platform hybrid",
+      "24/7 - Priority Support"
+    ],
+    "price": 375,
+    "currency": "€",
+    "billing": "per month, billed annually",
+    "color": "blue",
+    "recommended": false
+  },{
+    "title": "Enterprise",
+    "subtitle": "Managed Threat detection & Response  Network Performance Observability",
+    "features": [
+      "A Real-Time monitoring on Dashboards",
+      "Threat detection & monitoring entire infrastructure",
+      "AI powered detection dynamic workloads",
+      "Deploy in hybrid environment",
+      "Automated registration for any loads",
+      "Data loss protection",
+      "Visualisation infrastructure",
+      "Scalable platform hybrid",
+      "24/7 - Priority Support"
+    ],
+    "price": 583,
+    "currency": "€",
+    "billing": "per month, billed annually",
+    "color": "green",
+    "recommended": true
+  },{
+    "title": "Enterprise",
+    "subtitle": "Network Performance Observability",
+    "features": [
+      "A Real-Time monitoring on Dashboards",
+      "Accelerate and scale up your threat detection & response",
+      "Automate threat detection & response",
+      "AI powered detection dynamic workloads",
+      "Data visualisation for entire IT landscape",
+      "Scalable platform hybrid",
+      "24/7 - Priority Support"
+    ],
+    "price": 375,
+    "currency": "€",
+    "billing": "per month, billed annually",
+    "color": "orange",
+    "recommended": false
+  }
+ 
+]

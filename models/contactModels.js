@@ -11,9 +11,37 @@ const contactSchema = new mongoose.Schema({
     lowercase: true,
     match: /^\S+@\S+\.\S+$/
   },
-  message: {
+  contactNumber:{
     type: String,
-    default: ""
+    default:"",
+  },
+  address:{
+    type: String,
+    default:""
+  }, 
+  addressTwo:{
+    type: String,
+    default:""
+  },
+  city:{
+    type: String,
+    default:""
+  },
+  country:{
+    type: String,
+    default:""
+  },
+  saas:{
+    type: [String],
+    default:""
+  },
+  hosted:{
+    type: [String],
+    default:""
+  },
+  desiredDate:{
+    type:Date,
+    default:null
   },
   createdAt: {
     type: Date,

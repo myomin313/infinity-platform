@@ -1,9 +1,10 @@
-require("dotenv").config();
+
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 (async () => {
   const MONGO_URL = process.env.MONGO_URL;
-
+  console.log("MOngo_Url",MONGO_URL);
   try {
     await mongoose.connect(MONGO_URL);
 

@@ -1,0 +1,27 @@
+[
+  {
+    "modelType": "PER-DATA USAGE PRICING",
+    "pricePerMonth": "€35 - €600",
+    "hundredEmployees": "€3,500 - €60,000"
+  },
+  {
+    "modelType": "PER-DEVICE PRICING",
+    "pricePerMonth": "€38 - €675",
+    "hundredEmployees": "€3,800 - €67,500"
+  },
+  {
+    "modelType": "PER-USER PRICING",
+    "pricePerMonth": "€35 - €600",
+    "hundredEmployees": "€3,500 - €60,000"
+  },
+  {
+    "modelType": "CLOUD-BASED PRICING",
+    "pricePerMonth": "€43 - €711",
+    "hundredEmployees": "€4,300 - €71,100"
+  },
+  {
+    "modelType": "TIERED PRICING",
+    "pricePerMonth": "€50 - €970",
+    "hundredEmployees": "€5,000 - €97,000"
+  }
+]

@@ -1,0 +1,397 @@
+[
+  {
+    "id": 1,
+    "title": "ViXa Identity-First Platform",
+    "description": "Complete visibility into your entire security and network infrastructure powered by AI.",
+    "url": "/platform",
+    "embedding": [
+    
+    ]
+  },
+  {
+    "id": 2,
+    "title": "How It Works",
+    "description": "Learn how ViXa helps secure your network using machine learning and AIOps.",
+    "url": "/how-it-works",
+    "embedding": [
+    
+    ]
+  }
+]
+
+
+[
+  {
+    "id": 1,
+    "text": "Network Device Inventory-  Router with ID router-nyc-01 is a Cisco ASR-1001-X located in New York Data Center, running IOS-XE 17.6.1. IP: 192.168.1.1. Status: online. Criticality: high.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 2,
+    "text": "Network Device Inventory - Switch with ID switch-lon-02 is a Juniper EX4300-48T located in London Office, running JunOS 20.4R3. IP: 192.168.2.5. Status: online. Criticality: medium.",
+    "url": "/home",
+    "embedding": []
+  },
+   {
+    "id": 3,
+    "text": "Security Event sec-20241115-001 at 2024-11-15T08:15:32Z: High severity brute force attempt from 45.227.253.109 targeting router-nyc-01. Description: Multiple failed SSH login attempts detected. Status: investigating. Mitigation: blocked_source_ip.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 4,
+    "text": "Security Event sec-20241115-002 at 2024-11-15T08:22:17Z: Medium severity port scan from 185.143.223.41 targeting switch-lon-02. Description: Port scanning activity detected on ports 22,80,443. Status: resolved. Mitigation: alerted.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 5,
+    "text": "Performance metric perf-nyc-rt-001 for router-nyc-01 at 2024-11-15T08:45:00Z. CPU: 65.2%. Memory: 42.8%. Interface Gi0/0/0 - In: 245.7 Mbps, Out: 187.3 Mbps. Latency: 12.4 ms. Packet loss: 0.02%.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 6,
+    "text": "Performance metric perf-lon-sw-002 for switch-lon-02 at 2024-11-15T08:45:00Z. CPU: 28.4%. Memory: 35.1%. Interface ge-0/0/1 - In: 87.2 Mbps, Out: 92.5 Mbps. Latency: 5.7 ms. Packet loss: 0.0%.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 7,
+    "text": "Topology link between router-nyc-01 and switch-lon-02. Bandwidth: 1Gbps. Latency: 45ms. Utilization: 68.2%.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 8,
+    "text": "Alert Rule alert-cpu-01: High CPU Utilization. Triggers when CPU usage exceeds 80% for 5m. Severity: high. Actions: email_admin, create_ticket.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 9,
+    "text": "Alert Rule alert-portscan-01: Port Scanning Activity. Triggers when port scan attempts exceed 10 in 1m. Severity: medium. Actions: email_security, log_event.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 10,
+    "text": "Hybrid Cloud Component aws-vpc-01: AWS VPC in us-east-1 with CIDR 10.0.0.0/16. Connected to router-nyc-01. Security Groups: sg-0123456789abcdef0.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 11,
+    "text": "Hybrid Cloud Component azure-vnet-01: Azure VNet in westeurope with CIDR 10.1.0.0/16. Connected to router-nyc-01. NSG: nsg-987654321.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 12,
+    "text": "Compliance Check cis-001 for CIS Benchmark: Requirement 5.1.1 Ensure password expiration is 365 days or less. Status: compliant. Affected devices: router-nyc-01, switch-lon-02. Last checked: 2024-11-14T04:00:00Z.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 13,
+    "text": "Compliance Check hipaa-003 for HIPAA: Requirement 164.312(e)(1) Transmission Security. Status: non-compliant. Affected device: switch-lon-02. Remediation: Enable TLS 1.2 or higher for all external communications. Last checked: 2024-11-14T04:00:00Z.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 14,
+    "text": "Project 'Global Banking Platform Modernisation' uses Kubernetes, AWS, Terraform, Jenkins, and complies with PCI-DSS, SOC2, GDPR.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 15,
+    "text": "Alex Chen is the DevSecOps Lead responsible for security architecture and compliance oversight.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 16,
+    "text": "The Jenkins CI/CD pipeline includes stages: Checkout, Dependency Check, SAST Scan, Build, and Unit Test, triggered on PR to main.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 17,
+    "text": "The secure AWS EKS cluster uses Terraform with private endpoints and KMS encryption enabled.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 18,
+    "text": "Security policies enforce least privilege access, MFA, JIT access, and OWASP Top 10 secure coding practices.",
+   "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 19,
+    "text": "Monitoring includes Prometheus for application errors and New Relic for API response times with ViXa dashboards.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 20,
+    "text": "Compliance includes PCI-DSS network security controls via AWS Security Groups and GDPR Article 32 with encryption.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 21,
+    "text": "Risk SEC-001: Exposed API endpoints mitigated by WAF and rate limiting; owner: Jordan Wright.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 22,
+    "text": "DevSecOps training covers secure coding, Kubernetes hardening, and CI/CD security automation.",
+   "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 23,
+    "text": "The AI Search project led by Dr. Vui Nguyen uses Elasticsearch, BERT, and FastAPI deployed on AWS.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 13,
+    "text": "IoT Smart Camera was compromised by the Mirai Botnet due to default credentials (CVE-2021-28372); mitigation includes enforcing strong passwords and 2FA.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 14,
+    "text": "Medical IoT pacemaker vulnerable to unencrypted firmware updates (CVE-2020-12345), targeted by APT29; mitigation: signed and encrypted OTA updates.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 15,
+    "text": "Industrial sensor buffer overflow (CVE-2022-35679) exploited by Lazarus Group; mitigation: upgrade to TLS 1.3 and input validation.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 16,
+    "text": "Smart thermostat exposed to SQL injection (CVE-2024-1024); mitigation: WAF and API rate limiting; 2024 HVAC ransomware attack reported.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 17,
+    "text": "AI/ML project phase: Data Collection includes tasks like identifying data sources, establishing pipelines, and implementing scraping and API tools.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 18,
+    "text": "In-progress Data Processing phase includes text extraction, data cleaning, entity recognition, and metadata enrichment for the AI search pipeline.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 19,
+    "text": "Model Development phase includes baseline model, custom training, metrics setup, and A/B testing framework, planned for 8 weeks.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 20,
+    "text": "System Integration involves API development, UI integration, performance optimization, and security setup, scheduled for 6 weeks.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 21,
+    "text": "Final Deployment phase includes staging setup, UAT, production rollout, and monitoring, taking 4 weeks.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 22,
+    "text": "Knowledge Base Document 'AI Implementation Best Practices' covers data governance, model deployment, and monitoring in enterprise settings.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 23,
+    "text": "Research paper compares transformer-based retrieval models, showing 15% performance gains over traditional search methods.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 24,
+    "text": "Support ticket flagged poor synonym handling causing search inaccuracies; issue resolved with NLP pipeline improvements.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 25,
+    "text": "Performance metrics: search latency <500ms (p95), recall@10 >0.85, precision@5 >0.90, and MRR >0.75.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 26,
+    "text": "Business metrics aim for 4.5+ user satisfaction, 15% increase in search conversion, and 20% reduction in support tickets.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 27,
+    "text": "Model metrics show 92.3% training accuracy, validation loss of 0.153, and 120ms average inference time.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 28,
+    "text": "In the Code Commit stage, ViXa platform detected hardcoded AWS keys exposing 5 critical secrets. Remediated with secrets rotation and Git hooks. Compliance: PCI-DSS 3.2.1.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 29,
+    "text": "During Build stage, ViXa platform flagged Log4j vulnerability (CVE-2023-44228, CVSS 10.0). Remediated by upgrading to Log4j 2.17.0. Compliance: NIST SP 800-218.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 30,
+    "text": "At Deployment stage, container image vulnerability (CVE-2024-1234) found in Alpine Linux. Patched base image as per CIS Docker Benchmark.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 31,
+    "text": "Runtime cryptojacking behavior detected by ViXa due to unauthorized CPU spikes. Mitigation: killed pod and alerted SOC. MITRE ATT&CK: T1496.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 32,
+    "text": "SolarWinds supply chain attack compromised 18K organizations via trojanized software update. MSSP deployed zero trust and network segmentation. Lesson: monitor DLL sideloading in CI/CD.",
+   "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 33,
+    "text": "Colonial Pipeline ransomware attack exploited RDP via phishing. $4.4M ransom paid. MSSP response: EDR deployment and dark web monitoring. Lesson: segment OT and IT networks.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 34,
+    "text": "Log4j exploitation (JNDI injection) exposed 100M+ servers. MSSP enforced emergency patching and WAF rule updates. Lesson: automate CVE scanning in DevSecOps.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 35,
+    "text": "Tesla S3 bucket leaked autopilot data due to misconfigured IAM. MSSP enforced CSPM and S3 encryption. Lesson: least privilege for cloud roles.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 36,
+    "text": "AI search index fields include categories like IoT, DevSecOps, and IncidentResponse; severities from Critical to Low; MITRE tactics TA0001 (Initial Access), TA0002 (Execution); compliance tags GDPR, HIPAA, ISO27001; timestamp 2024-01-01T00:00:00Z; data sources include CVE Database, SOC Alerts, and Honeypot Logs.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 37,
+    "text": "IoT Security Event: Unauthorized Access - Device: IoT-Cam-001 - Severity: High - Description: Suspicious login attempt from unknown IP (192.168.1.105) - Action: Blocked IP, reset credentials",
+    "url": "/home",
+    "embedding": [],
+  },
+  {
+    "id": 38,
+    "text": "IoT Security Event: Firmware Tampering - Device: IoT-Temp-042 - Severity: Critical - Description: Firmware checksum mismatch, possible malware injection - Action: Isolated device, initiated rollback",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 39,
+    "text": "Cloud Security Event: S3 Bucket Exposed - Provider: AWS - Severity: High - Description: Publicly accessible S3 bucket containing PII - Remediation: Bucket ACL restricted, logs reviewed",
+    "url": "/home",
+    "embedding": [],
+  },
+  {
+    "id": 40,
+    "text": "DevSecOps Event: High-risk npm package - Pipeline Stage: Build - Tool: ViXa platform - Vulnerability: lodash RCE - Severity: Critical - Status: Patched",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 41,
+    "text": "Threat Intelligence: APT29 (Cozy Bear) - Tactic: Supply Chain Compromise - Indicator: Malicious npm package (ua-parser-js) - Impact: Compromised 50+ enterprises",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 42,
+    "text": "IoT Device Log: iot-cam-001 - Event: unusual_connection - Source IP: 192.168.1.100 - Dest IP: 45.67.89.12 - Protocol: HTTPS - Payload: 1.2MB - Threat Score: 85",
+    "url": "/home",
+    "embedding": []
+  },
+   {
+    "id": 43,
+    "text": "In the Code Commit stage, ViXa platform detected hardcoded AWS keys exposing 5 critical secrets. Remediated with secrets rotation and Git hooks. Compliance: PCI-DSS 3.2.1.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 44,
+    "text": "During Build stage, ViXa platform flagged Log4j vulnerability (CVE-2023-44228, CVSS 10.0). Remediated by upgrading to Log4j 2.17.0. Compliance: NIST SP 800-218.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 45,
+    "text": "At Deployment stage, container image vulnerability (CVE-2024-1234) found in Alpine Linux. Patched base image as per CIS Docker Benchmark.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 46,
+    "text": "Runtime cryptojacking behavior detected by ViXa due to unauthorized CPU spikes. Mitigation: killed pod and alerted SOC. MITRE ATT&CK: T1496.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 47,
+    "text": "SolarWinds supply chain attack compromised 18K organizations via trojanized software update. MSSP deployed zero trust and network segmentation. Lesson: monitor DLL sideloading in CI/CD.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 47,
+    "text": "Colonial Pipeline ransomware attack exploited RDP via phishing. $4.4M ransom paid. MSSP response: EDR deployment and dark web monitoring. Lesson: segment OT and IT networks.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 49,
+    "text": "Log4j exploitation (JNDI injection) exposed 100M+ servers. MSSP enforced emergency patching and WAF rule updates. Lesson: automate CVE scanning in DevSecOps.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 50,
+    "text": "Tesla S3 bucket leaked autopilot data due to misconfigured IAM. MSSP enforced CSPM and S3 encryption. Lesson: least privilege for cloud roles.",
+    "url": "/home",
+    "embedding": []
+  },
+  {
+    "id": 51,
+    "text": "AI search index fields include categories like IoT, DevSecOps, and IncidentResponse; severities from Critical to Low; MITRE tactics TA0001 (Initial Access), TA0002 (Execution); compliance tags GDPR, HIPAA, ISO27001; timestamp 2024-01-01T00:00:00Z; data sources include CVE Database, SOC Alerts, and Honeypot Logs.",
+    "url": "/home",
+    "embedding": []
+  }
+
+]

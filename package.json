@@ -2,9 +2,11 @@
   "name": "ost-platform-api",
   "version": "1.0.0",
   "description": "To make it easy for you to get started with GitLab, here's a list of recommended next steps.",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "dev": "nodemon --require dotenv/config clustered-ost.js dotenv_config_path=./.env.local",
+    "dev": "nodemon --require dotenv/config app.js dotenv_config_path=./.env.local",
+    "start": "node app.js",
+    "prod": "NODE_ENV=production node app.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
@@ -16,9 +18,22 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-sns": "^3.821.0",
+    "@xenova/transformers": "^2.17.2",
+    "aws-sdk": "^2.1692.0",
+    "axios": "^1.9.0",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "mongoose": "^8.15.1"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.1",
+    "nodemailer": "^7.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0",
+    "prettier": "^3.2.5",
+    "eslint": "^8.56.0",
+    "husky": "^9.0.11"
   }
 }
