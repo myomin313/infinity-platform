@@ -1,28 +1,32 @@
-
 const mongoose = require("mongoose");
 require("dotenv").config();
-
-(async () => {
-  const MONGO_URL = process.env.MONGO_URL;
-  console.log("MOngo_Url",MONGO_URL);
+ 
+const connectDB = async () => {
+  const MONGODB_URI = process.env.MONGODB_URI;
+  console.log("MONGODB_URI:", MONGODB_URI);
+ 
   try {
-    await mongoose.connect(MONGO_URL);
-
-    mongoose.connection.once("open", function () {
-      mongoose.connection.on("disconnected", function () {
-        console.log("MongoDB event disconnected - " + new Date());
+    await mongoose.connect(MONGODB_URI);
+ 
+    mongoose.connection.once("open", () => {
+      console.log("MongoDB connected successfully.");
+ 
+      mongoose.connection.on("disconnected", () => {
+        console.log("MongoDB disconnected at", new Date());
       });
-      mongoose.connection.on("reconnected", function () {
-        console.log("MongoDB event reconnected - " + new Date());
+ 
+      mongoose.connection.on("reconnected", () => {
+        console.log("MongoDB reconnected at", new Date());
       });
-      mongoose.connection.on("error", function (err) {
-        console.log("MongoDB event error: " + err + " - " + new Date());
+ 
+      mongoose.connection.on("error", (err) => {
+        console.log("MongoDB error:", err, "at", new Date());
       });
     });
   } catch (err) {
-    console.error(err);
+    console.error("MongoDB connection error:", err);
+    process.exit(1); // Exit if unable to connect
   }
-})();
-
-const sharedConnection = mongoose.connection;
-module.exports = sharedConnection;
+};
+ 
+module.exports = connectDB;

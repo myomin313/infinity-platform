@@ -6,7 +6,7 @@ const https = require('https');
 const Log = require('./models/logsModel');
 
 
-const contactController = require("./controllers/ContactController");
+const contactController = require("./controllers/contactController");
 const productController = require('./controllers/ProductController');
 const UserController = require('./controllers/UserController');
 const SearchController = require('./controllers/SearchController');
