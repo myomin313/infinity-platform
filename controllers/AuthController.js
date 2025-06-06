@@ -16,6 +16,9 @@ const crypto = require('crypto');
 
 const nodemailer = require("nodemailer");
 
+const multer = require('multer');
+const upload = multer();
+
 const pendingSubscriptions = new Map();
 
 const APP_URL = process.env.APP_URL;
@@ -25,8 +28,8 @@ const APP_URL = process.env.APP_URL;
 const transporter = nodemailer.createTransport({
   service: "gmail", // or 'hotmail', 'yahoo', or custom SMTP
   auth: {
-    user: "myomin439420@gmail.com",
-    pass: "ppnmm2012dubai",
+    user: "",
+    pass: "",
   },
 });
 
@@ -45,7 +48,7 @@ const sendVerificationEmail = async (to, link) => {
 
 
 
-router.post('/subscribe', async (req, res) => {
+router.post('/subscribe', upload.none(), async (req, res) => {
     console.log("req body",req.body);
   const email  = req.body.email;
   const token = crypto.randomBytes(20).toString('hex');
@@ -53,8 +56,7 @@ router.post('/subscribe', async (req, res) => {
 
   pendingSubscriptions.set(token, { email, expiresAt });
   const verificationLink = `${APP_URL}/auth/verify?token=${token}`;
-
-
+  
    try {
     await sendVerificationEmail(email, verificationLink);
     const success = success("Verification email sent. Check your inbox.")

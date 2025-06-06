@@ -14,6 +14,9 @@ const {
   notFound
 } = require("../commonFunctions/response")
 
+const multer = require('multer');
+const upload = multer();
+
 
 const JWT_SECRET = "ostmyo@9DjR5pZwQ2mS7kP4"
 
@@ -45,7 +48,7 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
-router.post("/signup", async (req, res) => {
+router.post("/signup", upload.none(), async (req, res) => {
  
   try {
     console.log("user module signup", req.body);
@@ -75,11 +78,11 @@ router.post("/signup", async (req, res) => {
 
         if (isEmailExist) {
           console.log("conflict email");
-          let response = conflict("email");
+          let response = conflict("email already exit");
           return res.json(response);
         } else if (isUsernameExist) {
           console.log("conflict userName");
-          let response = conflict("userName");
+          let response = conflict("userName already exit");
           return res.json(response);
         } else {
           console.log("create new user,send otp on email and store it in user object");
@@ -137,9 +140,10 @@ router.post("/signup", async (req, res) => {
 });
 
 
-router.post("/login", async (req, res) => {
+router.post("/login", upload.none(), async (req, res) => {
      //try {
     const { identifier, password } = req.body;
+    console.log("req.body.",req.body.password);
     if (!identifier || !password) {
       const response = error("Please provide identifier and password")
       return res.json(response);
