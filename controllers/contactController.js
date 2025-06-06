@@ -24,6 +24,7 @@ const snsClient = new SNSClient({
   }
 });
 const arn = "arn:aws:sns:ap-southeast-2:686026643634:contact-notifications";
+const RECAPTCHA_SECRET_KEY = "6Le7x1YrAAAAAI7xlA6U77lokwdWXnZGgRIrJ268";
 
 const router = express.Router();
 
@@ -35,9 +36,19 @@ function isValidEmail(email) {
 router.post("/send", async (req, res) => {
   
   try {
-    console.log("contact form data", req.body);
+   // console.log("contact form data", req.body);
 
-    let isRequired = checkRequiredFields(["name", "email","contactNumber","address","city","country"], req.body);
+    let isRequired = checkRequiredFields(["name", "email","contactNumber","address","city","country","captcha"], req.body);
+
+
+    const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${captcha}`;
+
+    const { data } = await axios.post(verifyURL);
+
+    if (!data.success) {
+      return res.status(400).json({ message: "Captcha verification failed" });
+    }
+
 
     if (isRequired) {
       console.log("send required fields response");
@@ -47,10 +58,10 @@ router.post("/send", async (req, res) => {
       let name = req.body.name;
       let userEmail = req.body.email;
       let contactNumber = req.body.contactNumber;
-      let addressOne = req.body.addressOne;
+      let address = req.body.address;
       let addressTwo = req.body.addressTwo;
       let city = req.body.city;
-      let country = req.body.city;
+      let country = req.body.country;
       let saas = req.body.saas;
       let hosted = req.body.hosted;
       let desiredDate = req.body.desiredDate;
@@ -62,7 +73,7 @@ router.post("/send", async (req, res) => {
                   name: name,
                   email: userEmail,
                   contactNumber:contactNumber,
-                  addressOne:addressOne,
+                  address:address,
                   addressTwo:addressTwo,
                   city:city,
                   country:country,
@@ -87,7 +98,7 @@ SaaS: ${saas}
 Hosted: ${hosted}
 Desired Date: ${desiredDate}
 `;
-console.log("No error");
+
     // Publish to SNS
   const command = new PublishCommand({
       Message: snsMessage,
@@ -99,18 +110,15 @@ console.log("No error");
        await snsClient.send(command);
        console.log("success in mail send")
     } catch (err) {
-    // console.error("try catch error", err); // Log full error
-    //let response = internalError();
-    return res.status(500).json(err); // Use appropriate status code
+    const response = error(err);
+    return res.json(response);
   }
-
-
         let response = success("Thank you for contacting us!");
         return res.json(response);
          
       } else {
         console.log("invalid part called");
-        let response = invalidEmail();
+        let response = error(invalidEmail());
         return res.json(response);
       }
     }

@@ -3,6 +3,18 @@ const fs = require("fs");
 const path = require("path");
 const router = express.Router();
 
+const { checkRequiredFields } = require("../commonFunctions/validate");
+
+const {
+  success,
+  error,
+  requiredParams,
+  conflict,
+  invalidEmail,
+  internalError,
+  notFound
+} = require("../commonFunctions/response")
+
 const documentsPath = path.join(__dirname, "../commonFunctions/documents.json");
 
 function cosineSimilarity(a, b) {
@@ -28,7 +40,14 @@ function cosineSimilarity(a, b) {
 
 router.post("/", async (req, res) => {
   const { query } = req.body;
-  if (!query) return res.status(400).json({ error: "Missing query" });
+
+  let isRequired = checkRequiredFields(["query"], req.body);
+  
+  if (isRequired) {
+        console.log("send required fields response");
+        let response = requiredParams(isRequired);
+        return res.json(response);
+      }
 
   try {
     const { pipeline } = await import('@xenova/transformers');

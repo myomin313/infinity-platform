@@ -12,7 +12,9 @@ const UserController = require('./controllers/UserController');
 const SearchController = require('./controllers/SearchController');
 const ServiceController = require('./controllers/ServiceController');
 const SecurityController = require('./controllers/SecurityController');
-
+const CasestudyController = require('./controllers/CasestudyController');
+const StudycaseController = require('./controllers/StudycaseController');
+const AuthController = require('./controllers/AuthController');
 
 // Initialize Express
 const app = express();
@@ -66,7 +68,7 @@ router.get('/', (req, res) => res.json({
   status: 'OST API Running',
   dbState: mongoose.connection.readyState 
 }));
-
+app.use('/uploads', express.static('uploads'));
 // Import and mount controllers
  app.use("/contact", contactController);
  app.use("/product", productController);
@@ -74,6 +76,9 @@ router.get('/', (req, res) => res.json({
  app.use('/search',SearchController);
  app.use('/service',ServiceController);
  app.use('/security-services',SecurityController);
+ app.use('/case-study',CasestudyController);
+ app.use('/study-case',StudycaseController);
+ app.use('/auth',AuthController);
 // Error Handling
 app.use((err, req, res, next) => {
   console.error(err.stack);

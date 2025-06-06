@@ -4,7 +4,7 @@ const router = express.Router();
 const products = require('../commonFunctions/product.json')
 
 router.get("/", (req, res) => {
-  const { search, category } = req.query;
+  const { search} = req.query;
   let filtered = [...products];
 
   if (search) {
@@ -12,13 +12,6 @@ router.get("/", (req, res) => {
       product.name.toLowerCase().includes(search.toLowerCase())
     );
   }
-
-  if (category) {
-    filtered = filtered.filter(product =>
-      product.category.toLowerCase() === category.toLowerCase()
-    );
-  }
-
   res.json({
     status: "success",
     data: filtered
