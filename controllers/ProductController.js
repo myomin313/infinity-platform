@@ -4,7 +4,9 @@ const router = express.Router();
 const products = require('../commonFunctions/product.json')
 
 router.get("/", (req, res) => {
+
   const { search} = req.query;
+ // console.log("search",  req.body.search);
   let filtered = [...products];
 
   if (search) {

@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-//const AWS = require("aws-sdk");
+const axios = require("axios");
 
 const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
 
@@ -41,7 +41,7 @@ router.post("/send", async (req, res) => {
     let isRequired = checkRequiredFields(["name", "email","contactNumber","address","city","country","captcha"], req.body);
 
 
-    const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${captcha}`;
+    const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${req.body.captcha}`;
 
     const { data } = await axios.post(verifyURL);
 
