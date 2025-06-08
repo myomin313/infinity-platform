@@ -15,6 +15,8 @@ const SecurityController = require('./controllers/SecurityController');
 const CasestudyController = require('./controllers/CasestudyController');
 const StudycaseController = require('./controllers/StudycaseController');
 const AuthController = require('./controllers/AuthController');
+const JobController = require('./controllers/JobController');
+const ApplicantController = require('./controllers/ApplicantController');
 
 // Initialize Express
 const app = express();
@@ -79,6 +81,8 @@ app.use('/uploads', express.static('uploads'));
  app.use('/case-study',CasestudyController);
  app.use('/study-case',StudycaseController);
  app.use('/auth',AuthController);
+ app.use('/job',JobController);
+ app.use('/apply',ApplicantController);
 // Error Handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -87,7 +91,6 @@ app.use((err, req, res, next) => {
 
 // Server Initialization with Port Conflict Handling
 const port = 9003;
-//const port = process.env.PORT || 9003;
 const server = process.env.NODE_ENV === 'production' 
   ? https.createServer(app) 
   : http.createServer(app);

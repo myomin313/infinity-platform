@@ -31,9 +31,14 @@ router.post("/create", upload.single("logo"), async (req, res) => {
     });
 
     await newCase.save();
-    res.json({ success: true, data: newCase });
+
+    const response = success("case study created",{
+       newCase
+    })
+     return res.json(response);
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    const response = error(err);
+     return res.json(response);
   }
 });
 

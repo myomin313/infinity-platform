@@ -2,11 +2,18 @@ const express = require("express");
 const router = express.Router();
 
 const products = require('../commonFunctions/product.json')
+const {
+  success,
+  error,
+  requiredParams,
+  conflict,
+  invalidEmail,
+  internalError,
+  notFound
+} = require("../commonFunctions/response")
 
 router.get("/", (req, res) => {
-
   const { search} = req.query;
- // console.log("search",  req.body.search);
   let filtered = [...products];
 
   if (search) {
@@ -14,10 +21,8 @@ router.get("/", (req, res) => {
       product.name.toLowerCase().includes(search.toLowerCase())
     );
   }
-  res.json({
-    status: "success",
-    data: filtered
-  });
+   const response = success("product list",filtered)
+   return res.json(response);
 });
 
 module.exports = router;

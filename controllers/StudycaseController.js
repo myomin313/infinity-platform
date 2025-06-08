@@ -31,95 +31,80 @@ const upload = multer({ storage });
 router.post("/create", upload.single("file"), async (req, res) => {
   try {
     const { title, tags } = req.body;
-    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    const fileName = `${req.file.filename}`;
 
-    const newcase = new studyCaseModel({
+    const newCase = new studyCaseModel({
       title,
       tags: tags?.split(",").map(tag => tag.trim()),
-      fileUrl,
+      fileName,
     });
 
-    await newcase.save();
-    res.json({ success: true, data: newcase });
+    await newCase.save();
+    const response =  success("case study created successfully",newCase);
+   return res.json(response);
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    const response = error(err);
+    return  res.json(response);
   }
 });
 
 
 router.get("/", async (req, res) => {
   try {
-    const reports = await studyCaseModel.find().sort({ createdAt: -1 });
-    res.json({ success: true, data: reports });
+    const caseStudy = await studyCaseModel.find().sort({ createdAt: -1 });
+    console.log("caseStudy",caseStudy);
+    const response = success("case study  list", caseStudy);
+    return res.json(response);
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-router.get('/download', async (req, res) => {
-  const fileUrl = req.query.url;
-
-  if (!fileUrl) {
-    return res.status(400).json({ error: "Missing file URL" });
-  }
-
-  try {
-    const response = await axios({
-      method: 'GET',
-      url: fileUrl,
-      responseType: 'stream',
-    });
-
-    // Extract file name from URL
-    const fileName = fileUrl.split('/').pop();
-
-    // Set headers to force download
-    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-    res.setHeader('Content-Type', response.headers['content-type']);
-
-    // Pipe the file stream to the response
-    response.data.pipe(res);
-  } catch (error) {
-    console.error('Download error:', error.message);
-    res.status(500).json({ error: 'Failed to download file' });
+    const response = error(err);
+    return  res.json(response);
   }
 });
 
 
-// router.get("/download", async (req, res) => {
-//   //const { search, category } = req.query;
-//   const fileName = req.params.filename;
-//   const filePath = path.join(__dirname, '../commonFunctions', 'service.pdf');
+router.get("/download", async (req, res) => {
 
-//   res.download(filePath, (err) => {
-//     if (err) {
-//       console.error("Download error:", err);
-//       res.status(500).json({ message: "File not found or unable to download." });
-//     }
-//   });
+  //console.log("req query", req.query.fileName);
+  const fileName = req.query.fileName;
+  if (!fileName) {
+    const response = error("Missing file URL");
+    return res.json(response);
+  }
+  const filePath = path.join(__dirname, '../uploads', fileName);
+  res.download(filePath, (err) => {
+    if (err) {
+      console.error("Download error:", err);
+      res.status(500).json({ message: "File not found or unable to download." });
+    }
+  });
   
-// });
+});
 
+// router.get('/download', async (req, res) => {
+//   const fileName = req.query.fileName;
 
+//   if (fileName) {
+//     const response = error("Missing file URL");
+//     return res.json(response);
+//   }
 
-// router.get("/search", async (req, res) => {
 //   try {
-//     const { title, tag } = req.query;
+//     const response = await axios({
+//       method: 'GET',
+//       url: fileUrl,
+//       responseType: 'stream',
+//     });
+//     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+//     res.setHeader('Content-Type', response.headers['content-type']);
 
-//     const filter = {
-//       ...(title && { title: new RegExp(q, "i") }),
-//       ...(tag && { tags: tag }),
-//     };
 
-//     const results = await studyCaseModel.find(filter).sort({ createdAt: -1 });
-//     res.json({ success: true, data: results });
-//   } catch (err) {
-//     res.status(500).json({ success: false, error: err.message });
+//     response.data.pipe(res);
+//   } catch (error) {
+
+//     const response = error("Failed to download file");
+//     return res.json(response);
 //   }
 // });
-
-
-
 
 
 module.exports = router;
