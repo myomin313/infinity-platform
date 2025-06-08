@@ -16,21 +16,12 @@ const {
 } = require("../commonFunctions/response")
 
 router.get("/", async (req, res) => {
-  //const { search, category } = req.query;
-
  try {
     const services = await serviceModel.find({});  
-  //    success = success("success",services)
-   //res.json(services);
-
-     res.json({
-    status: "success",
-    data: services
-  });
-
-  } catch (error) {
-    //console.error(error);
-   const response = error(error)
+    const  response = success("success",services)
+      return res.json(response);
+  } catch (err) {
+   const response = error(err.message)
       return res.json(response);  
   }
 });

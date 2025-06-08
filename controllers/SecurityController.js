@@ -15,18 +15,15 @@ const {
 } = require("../commonFunctions/response")
 
 router.get("/", async (req, res) => {
-
-
  try {
     const securities = await securityModel.find({});  
-     res.json({
-    status: "success",
-    data: securities
-  });
 
+    const response = success("security service data",
+      securities
+    )
+      return res.json(response);
   } catch (error) {
-
-   const response = error(error)
+      const response = error(error)
       return res.json(response);  
   }
 });

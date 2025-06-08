@@ -16,74 +16,124 @@ const crypto = require('crypto');
 
 const nodemailer = require("nodemailer");
 
-const multer = require('multer');
-const upload = multer();
-
 const pendingSubscriptions = new Map();
 
 const APP_URL = process.env.APP_URL;
+const multer = require('multer');
+const upload = multer();
 
-
-//nodemailer
 const transporter = nodemailer.createTransport({
-  service: "gmail", // or 'hotmail', 'yahoo', or custom SMTP
+  host: "smtp.office365.com",        // Outlook SMTP server
+  port: 587,                         // TLS port
+  secure: false,                     // Use STARTTLS, not SSL
   auth: {
-    user: "",
-    pass: "",
+    user: process.env.sendMail,  // Your full Outlook email
+    pass: process.env.sendMailPass, // See below for important note
   },
+  tls: {
+    ciphers: 'SSLv3'
+  }
 });
 
 
-const sendVerificationEmail = async (to, link) => {
-  const mailOptions = {
-    from:"myomin439420@gmail.com",
-    to,
-    subject: "Verify your email",
-    html: `<p>Please verify your email by clicking the link below:</p>
-           <a href="${link}">${link}</a>`,
-  };
+// const sendVerificationEmail = async (to, link) => {
+//   console.log("user",process.env.sendMail);
+//     try {
+//     let info = await transporter.sendMail({
+//        from: '"OST Platform" <donotreply@ostinfinity.net>',
+//        to: "myomin313@gmail.com",
+//        subject: "Test Email",
+//       text: "Hello from Outlook SMTP! Myo Min",
+//     });
+//     console.log("Message sent: %s", info.messageId);
 
-  return transporter.sendMail(mailOptions);
+//    } catch (err) {
+//      console.error("Nodemailer:", err);
+   
+//    }
+
+// };
+
+const sendVerificationEmail = async (to, link) => {
+  //console.log("user",process.env.sendMail);
+    try {
+let info = await transporter.sendMail({
+  from: `"OST Platform" <${process.env.sendMail}>`,
+  to: `${to}`,
+  subject: "Welcome to OST Platform - Verify Your Email",
+  text: `Please use this to verify your email.`,
+  html: `
+    <div style="max-width:600px;margin:0 auto;font-family:Arial,sans-serif;border:1px solid #eee;border-radius:6px;">
+      <div style="background:#0078ff;color:#fff;padding:20px;text-align:center;border-top-left-radius:6px;border-top-right-radius:6px;">
+        <h2 style="margin:0;"> OST Platform</h2>
+      </div>
+      <div style="padding:30px;">
+        <p> OST Platform!</p>
+        <p>We're thrilled to have you on board. To get started and ensure your account is secure, please use click the link Below.</p>
+        <p style="font-size:16px;"> <span style="color:#0078ff;font-weight:bold;font-size:20px;"><a href="${link}">${link}</a></span></p>
+        <p>Welcome aboard, and happy exploring!</p>
+        <p style="margin-top:40px;">Best regards,<br/>Team OST</p>
+      </div>
+    </div>
+  `,
+});
+} catch (err) {
+     console.error("Nodemailer:", err);
+   
+   }
+
 };
 
 
-
 router.post('/subscribe', upload.none(), async (req, res) => {
-    console.log("req body",req.body);
+  //  console.log("req body",req.body);
+  try {
   const email  = req.body.email;
   const token = crypto.randomBytes(20).toString('hex');
   const expiresAt = Date.now() + 3600000;
 
   pendingSubscriptions.set(token, { email, expiresAt });
   const verificationLink = `${APP_URL}/auth/verify?token=${token}`;
-  
-   try {
+  console.log("verificationLink",verificationLink)
+   
     await sendVerificationEmail(email, verificationLink);
-    const success = success("Verification email sent. Check your inbox.")
-    res.json(success);
+    console.log("Verification email sent. Check your inbox.");
+
+   const result = success("Verification email sent", {
+      email: email,
+      token: token,
+    });
+    return res.json(result);
+  
   } catch (err) {
     const fail = error("Nodemailer error:", err);
-    res.json(fail);
+   return res.json(fail);
   }
-
 });
 
 router.get('/verify', (req, res) => {
   const token = req.query.token;
+  console.log("token",token);
+  //try{
   const subscription = pendingSubscriptions.get(token);
+  //console.log("subscription",subscription);
+  // }catch(err){
+  // console.log("error",err);
+  // }
+   //console.log("subscription",subscription);
   if (!subscription) {
-    const error = error('Invalid token')
-    return res.json(error);
+    const response = error('Invalid token',)
+    return res.json(response);
   }
   if (Date.now() > subscription.expiresAt) {
     pendingSubscriptions.delete(token);
-    const error = error('Token expired')
-    return res.json(error);
+    const response = error('Token expired',)
+    return res.json(response);
   }
   pendingSubscriptions.delete(token);
   console.log(`Verified email: ${subscription.email}`);
-  const success = success("Email verified successfully");
-  res.json(success);
+  const response = success("Email verified successfully");
+  res.json(response);
 });
 
 module.exports = router;

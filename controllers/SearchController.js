@@ -13,7 +13,10 @@ const {
   invalidEmail,
   internalError,
   notFound
-} = require("../commonFunctions/response")
+} = require("../commonFunctions/response");
+
+const multer = require('multer');
+const upload = multer();
 
 const documentsPath = path.join(__dirname, "../commonFunctions/documents.json");
 
@@ -38,7 +41,7 @@ function cosineSimilarity(a, b) {
   return dot / (normA * normB);
 }
 
-router.post("/", async (req, res) => {
+router.post("/", upload.none(), async (req, res) => {
   const { query } = req.body;
 
   let isRequired = checkRequiredFields(["query"], req.body);
@@ -52,9 +55,6 @@ router.post("/", async (req, res) => {
   try {
     const { pipeline } = await import('@xenova/transformers');
     const docs = JSON.parse(fs.readFileSync(documentsPath, "utf-8"));
-
-   
-
     const embedder = await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2");
     const output = await embedder(query, { pooling: "mean", normalize: true });
     const queryEmbedding = Array.from(output.data);
@@ -74,8 +74,8 @@ router.post("/", async (req, res) => {
     url
   }));
 ; // Add minimum similarity threshold
-
-    res.json(results.length > 0 ? results : []);
+   const response = success("search result",results.length > 0 ? results : []);
+    res.json(response);
   } catch (err) {
     console.error("Search error:", err);
     res.status(500).json({ 

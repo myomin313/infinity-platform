@@ -7,7 +7,7 @@ const responses = {
     };
 
     if (result != null) {
-      res["result"] = result;
+       res["result"] = result;
     }
 
     return res;

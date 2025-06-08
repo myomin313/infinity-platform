@@ -16,15 +16,16 @@ const {
   notFound
 } = require("../commonFunctions/response");
 
+const multer = require('multer');
+const upload = multer();
+
 const snsClient = new SNSClient({
-  region: "ap-southeast-2",
+  region: process.env.sns_region,
   credentials: {
-    accessKeyId: "AKIAZ7OS73CZMWGEXBLI",
-    secretAccessKey: "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"
+    accessKeyId: process.env.sns_accessKeyId,
+    secretAccessKey: process.env.sns_secretAccessKey
   }
 });
-const arn = "arn:aws:sns:ap-southeast-2:686026643634:contact-notifications";
-const RECAPTCHA_SECRET_KEY = "6Le7x1YrAAAAAI7xlA6U77lokwdWXnZGgRIrJ268";
 
 const router = express.Router();
 
@@ -33,7 +34,7 @@ function isValidEmail(email) {
   return emailPattern.test(email);
 }
 // endpoint for contact send mail
-router.post("/send", async (req, res) => {
+router.post("/send", upload.none(), async (req, res) => {
   
   try {
    // console.log("contact form data", req.body);
@@ -41,15 +42,14 @@ router.post("/send", async (req, res) => {
     let isRequired = checkRequiredFields(["name", "email","contactNumber","address","city","country","captcha"], req.body);
 
 
-    const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${req.body.captcha}`;
+    const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.CAPTCHA_SECRET_KEY}&response=${req.body.captcha}`;
 
     const { data } = await axios.post(verifyURL);
 
     if (!data.success) {
-      return res.status(400).json({ message: "Captcha verification failed" });
+      return res.status(400).json({ message: "captcha verification failed" });
     }
-
-
+    
     if (isRequired) {
       console.log("send required fields response");
       let response = requiredParams(isRequired);
@@ -91,7 +91,7 @@ New Contact Submission:
 Name: ${name}
 Email: ${userEmail}
 Contact Number: ${contactNumber}
-Address: ${addressOne}, ${addressTwo || ''}
+Address: ${address}, ${addressTwo || ''}
 City: ${city}
 Country: ${country}
 SaaS: ${saas}
@@ -103,7 +103,7 @@ Desired Date: ${desiredDate}
   const command = new PublishCommand({
       Message: snsMessage,
       Subject: "OST Infinity Platform Contact Form Submission",
-      TopicArn: arn // Make sure this is set in your .env
+      TopicArn: process.env.arn // Make sure this is set in your .env
   });
 
     try{
@@ -113,7 +113,7 @@ Desired Date: ${desiredDate}
     const response = error(err);
     return res.json(response);
   }
-        let response = success("Thank you for contacting us!");
+        let response = success("contact form submit success",newContact);
         return res.json(response);
          
       } else {

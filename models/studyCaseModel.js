@@ -8,7 +8,7 @@ const studycaseSchema = new mongoose.Schema({
   tags: {
     type: [String],
   },
-  fileUrl: {
+  fileName: {
     type: String,
   },
   createdAt: {
