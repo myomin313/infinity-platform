@@ -4,18 +4,18 @@ const mongoose = require("mongoose");
 const orderSchema = new mongoose.Schema({
   serviceId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "tilted_user",
+    ref: "services",
     required: true
   },
   quantity:{
     type:Number,
      required: true
   },
-  buyerName:{
+  customerName:{
     type:String,
      required: true
   },
-  buyerEmail:{
+  customerEmail:{
     type:String,
      required: true
   },
@@ -43,18 +43,6 @@ const orderSchema = new mongoose.Schema({
     type: String,
     enum: ["Pending", "Paid", "Failed", "Refunded"],
     default: "Pending"
-  },
-  transactionId: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  paymentMethod: {
-    type: String,
-    required: true
-  },
-  paymentInfo: {
-    type: mongoose.Schema.Types.Mixed
   },
   status: { type: String, default: "Processing" },
   createdAt: {

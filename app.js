@@ -17,9 +17,36 @@ const StudycaseController = require('./controllers/StudycaseController');
 const AuthController = require('./controllers/AuthController');
 const JobController = require('./controllers/JobController');
 const ApplicantController = require('./controllers/ApplicantController');
-
+const PaymentController = require('./controllers/PaymentController');
 // Initialize Express
 const app = express();
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+
+// Swagger configuration
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Sample API',
+      version: '1.0.0',
+      description: 'A simple API that responds with a sample message',
+    },
+    servers: [
+      {
+        url: process.env.API_URL,
+      },
+    ],
+  },
+  apis: ['./index.js'], // path to API docs
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+// Swagger UI setup
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 // Middleware
 app.use(express.json());
@@ -72,17 +99,18 @@ router.get('/', (req, res) => res.json({
 }));
 app.use('/uploads', express.static('uploads'));
 // Import and mount controllers
- app.use("/contact", contactController);
- app.use("/product", productController);
- app.use('/user',UserController);
- app.use('/search',SearchController);
- app.use('/service',ServiceController);
- app.use('/security-services',SecurityController);
- app.use('/case-study',CasestudyController);
- app.use('/study-case',StudycaseController);
- app.use('/auth',AuthController);
- app.use('/job',JobController);
- app.use('/apply',ApplicantController);
+app.use("/contact", contactController);
+app.use("/product", productController);
+app.use('/user',UserController);
+app.use('/search',SearchController);
+app.use('/service',ServiceController);
+app.use('/security-services',SecurityController);
+app.use('/case-study',CasestudyController);
+app.use('/study-case',StudycaseController);
+app.use('/auth',AuthController);
+app.use('/job',JobController);
+app.use('/apply',ApplicantController);
+app.use('/payment',PaymentController);
 // Error Handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
