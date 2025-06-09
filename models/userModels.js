@@ -91,6 +91,18 @@ const userSchema = new mongoose.Schema({
     type:Boolean,
     default:false,
   },
+  deleted: {
+  type: Boolean,
+  default: false,
+ },
+ enabled: {
+  type: Boolean,
+  default: false,
+ },
+ suspended: {
+  type: Boolean,
+  default: false,
+},
   createdAt: {
     type: Date,
     default: Date.now
