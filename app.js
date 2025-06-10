@@ -1,4 +1,4 @@
-require('dotenv').config({ path: './.env' });
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const http = require('http');
@@ -39,7 +39,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./index.js'], // path to API docs
+  apis: ['./app.js'], // path to API docs
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
