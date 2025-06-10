@@ -1,4 +1,4 @@
-require('dotenv').config({ path: './.env.local' });
+require('dotenv').config({ path: './.env' });
 const express = require('express');
 const mongoose = require('mongoose');
 const http = require('http');
@@ -17,7 +17,7 @@ const StudycaseController = require('./controllers/StudycaseController');
 const AuthController = require('./controllers/AuthController');
 const JobController = require('./controllers/JobController');
 const ApplicantController = require('./controllers/ApplicantController');
-const PaymentController = require('./controllers/PaymentController');
+const PaymentController = require('./controllers/paymentController');
 // Initialize Express
 const app = express();
 
@@ -35,7 +35,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: process.env.API_URL,
+        url: process.env.SWAGGER_URL,
       },
     ],
   },
