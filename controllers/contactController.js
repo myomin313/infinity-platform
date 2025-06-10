@@ -37,7 +37,7 @@ function isValidEmail(email) {
 router.post("/send", upload.none(), async (req, res) => {
   
   try {
-   // console.log("contact form data", req.body);
+ 
 
     let isRequired = checkRequiredFields(["name", "email","contactNumber","address","city","country","captcha"], req.body);
 
@@ -83,8 +83,6 @@ router.post("/send", upload.none(), async (req, res) => {
                 });
 
         let result = await newContact.save();
-
-
         // Prepare message for SNS
     const snsMessage = `
 New Contact Submission:

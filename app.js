@@ -45,12 +45,15 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 // Swagger UI setup
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 // Middleware
-app.use(express.json());
+// const bodyParser = require("body-parser");
+//app.use(bodyParser.json());
+//app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Database Connection (Updated for Mongoose 6+)
 const MONGO_URL = process.env.MONGODB_URI || process.env.MONGO_URL;

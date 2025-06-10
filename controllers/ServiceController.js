@@ -27,8 +27,6 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/download", async (req, res) => {
-  //const { search, category } = req.query;
-  //const fileName = req.params.filename;
   const filePath = path.join(__dirname, '../commonFunctions', 'service.pdf');
 
   res.download(filePath, (err) => {
