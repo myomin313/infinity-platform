@@ -42,10 +42,6 @@ router.post("/create", upload.single("logo"), async (req, res) => {
   }
 });
 
-
-
-
-
 router.get("/", async (req, res) => {
   try {
     const cases = await CaseStudy.find().sort({ createdAt: -1 });

@@ -25,11 +25,60 @@ const {
 
 const multer = require('multer');
 const upload = multer();
+const nodemailer = require("nodemailer");
+
 
 function isValidEmail(email) {
   const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
   return emailPattern.test(email);
 }
+
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.office365.com",        // Outlook SMTP server
+  port: 587,                         // TLS port
+  secure: false,                     // Use STARTTLS, not SSL
+  auth: {
+    user: process.env.sendMail,  // Your full Outlook email
+    pass: process.env.sendMailPass, // See below for important note
+  },
+  tls: {
+    ciphers: 'SSLv3'
+  }
+});
+
+
+const sendResetEmail = async (to, link) => {
+  //console.log("user",process.env.sendMail);
+    try {
+let info = await transporter.sendMail({
+  from: `"OST Platform" <${process.env.sendMail}>`,
+  to: `${to}`,
+  subject: "Welcome to OST Platform - Verify Your Email",
+  text: `Please use this to verify your email.`,
+  html: `
+    <div style="max-width:600px;margin:0 auto;font-family:Arial,sans-serif;border:1px solid #eee;border-radius:6px;">
+      <div style="background:#0078ff;color:#fff;padding:20px;text-align:center;border-top-left-radius:6px;border-top-right-radius:6px;">
+        <h2 style="margin:0;"> OST Platform</h2>
+      </div>
+      <div style="padding:30px;">
+        <p> OST Platform!</p>
+        <p>We're thrilled to have you on board. To get started and ensure your account is secure, please use click the link Below.</p>
+        <p style="font-size:16px;"> <span style="color:#0078ff;font-weight:bold;font-size:20px;"><a href="${link}">${link}</a></span></p>
+        <p>Welcome aboard, and happy exploring!</p>
+        <p style="margin-top:40px;">Best regards,<br/>Team OST</p>
+      </div>
+    </div>
+  `,
+});
+} catch (err) {
+     console.error("Nodemailer:", err);
+   
+   }
+
+};
+
+
 
 const signToken = id => {
   return jwt.sign({ id },process.env.JWT_SECRET, {
@@ -281,8 +330,6 @@ router.put('/:id', async (req, res) => {
     res.json({ message: 'Server error', error: err.message });
   }
 });
-
-
 // Soft Delete User
 router.post('/delete', upload.none(), async (req, res) => {
   try {
@@ -298,24 +345,7 @@ router.post('/delete', upload.none(), async (req, res) => {
 
     const  userIds  = req.body.userIds;
     const token =  req.body.resigninkey; // Expecting: { userIds: ["id1", "id2", "id3"] }
-   
-    // console.log("userIds",userIds);
-    //  let isValid = verifyJwtToken(resigninkey);
-
-
-   //const isValid = jwt.verify(resigninkey, process.env.JWT_SECRET);
-// try {
-   // const secret = process.env.JWT_SECRET;
-   // const decoded = jwt.verify(token, process.env.JWT_SECRET);
     let valid =await verifyJwtToken(token);
-  //   req.user = decoded; 
-  //   next();
-  // } catch (err) {
-  //   console.log("error");
-  //   return res.status(403).json({ error: 'Invalid or expired token.' });
-  // }
-    
-     // console.log("isValid",decoded);
     if (valid) {
 
     if (userIds.length === 0) {
@@ -421,7 +451,6 @@ router.post('/block', async (req, res) => {
   }
 });
 
-// Suspend multiple users based on checkbox selection
 router.post('/suspend-multiple', async (req, res) => {
   try {
      const userIds = req.body.userIds;
@@ -492,7 +521,65 @@ router.post("/login", upload.none(), async (req, res) => {
  
 });
 
+router.post('/forgot-password',upload.none(), async (req, res) => {
+      console.log("req.body ",req.body);
+  try {
+    let isRequired = checkRequiredFields(["email"], req.body); 
+ 
+    if (isRequired) {
+        console.log("send required fields response");
+        let response = requiredParams(isRequired);
+     
+        return res.json(response);
+    }
 
+    const email= req.body.email;
+    const user = await userModel.findOne({ email });
+    if (!user){
+       const response = error("User not found");
+       return res.json(response);
+    } 
+    const resetLink = `${process.env.APP_URL}/reset-password/${user._id}`;
+    await sendResetEmail(user.email, resetLink);
+    const response = success("Password reset email sent successfully",user.email);
+    return res.json(response);
+
+  } catch (err) {
+    console.error(err);
+    const response = error(err.message);
+    return res.json(response);
+  }
+});
+
+
+router.post('/reset-password/:token',upload.none(), async (req, res) => {
+  
+  const { token } = req.params;
+  try {
+     let isRequired = checkRequiredFields(["password"], req.body); 
+  if (isRequired) {
+      console.log("send required fields response");
+      let response = requiredParams(isRequired);
+      return res.json(response);
+  }else{
+
+    const password = req.body.password;
+  const updatedUser = await userModel.findByIdAndUpdate(
+  token,
+  {
+    password: password,
+  },
+  { new: true } // return updated doc
+);
+   const response = success("Password reset successfully")
+    res.json(response);
+    }
+  } catch (err) {
+    console.error(err);
+    const response=error(err.message);
+    res.json(response);
+  }
+});
 router.get("/", async (req, res) => {
   try {
     const user = await userModel.find({}, { password: 0 }).sort({ createdAt: -1 });

@@ -35,25 +35,6 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-
-// const sendVerificationEmail = async (to, link) => {
-//   console.log("user",process.env.sendMail);
-//     try {
-//     let info = await transporter.sendMail({
-//        from: '"OST Platform" <donotreply@ostinfinity.net>',
-//        to: "myomin313@gmail.com",
-//        subject: "Test Email",
-//       text: "Hello from Outlook SMTP! Myo Min",
-//     });
-//     console.log("Message sent: %s", info.messageId);
-
-//    } catch (err) {
-//      console.error("Nodemailer:", err);
-   
-//    }
-
-// };
-
 const sendVerificationEmail = async (to, link) => {
   //console.log("user",process.env.sendMail);
     try {
@@ -114,13 +95,9 @@ router.post('/subscribe', upload.none(), async (req, res) => {
 router.get('/verify', (req, res) => {
   const token = req.query.token;
   console.log("token",token);
-  //try{
+ 
   const subscription = pendingSubscriptions.get(token);
-  //console.log("subscription",subscription);
-  // }catch(err){
-  // console.log("error",err);
-  // }
-   //console.log("subscription",subscription);
+
   if (!subscription) {
     const response = error('Invalid token',)
     return res.json(response);

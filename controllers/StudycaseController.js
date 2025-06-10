@@ -64,7 +64,6 @@ router.get("/", async (req, res) => {
 
 router.get("/download", async (req, res) => {
 
-  //console.log("req query", req.query.fileName);
   const fileName = req.query.fileName;
   if (!fileName) {
     const response = error("Missing file URL");
@@ -79,32 +78,6 @@ router.get("/download", async (req, res) => {
   });
   
 });
-
-// router.get('/download', async (req, res) => {
-//   const fileName = req.query.fileName;
-
-//   if (fileName) {
-//     const response = error("Missing file URL");
-//     return res.json(response);
-//   }
-
-//   try {
-//     const response = await axios({
-//       method: 'GET',
-//       url: fileUrl,
-//       responseType: 'stream',
-//     });
-//     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-//     res.setHeader('Content-Type', response.headers['content-type']);
-
-
-//     response.data.pipe(res);
-//   } catch (error) {
-
-//     const response = error("Failed to download file");
-//     return res.json(response);
-//   }
-// });
 
 
 module.exports = router;
