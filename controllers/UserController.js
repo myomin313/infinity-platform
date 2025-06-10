@@ -297,13 +297,26 @@ router.post('/delete', upload.none(), async (req, res) => {
     } 
 
     const  userIds  = req.body.userIds;
-    const resigninkey =  req.body.resigninkey; // Expecting: { userIds: ["id1", "id2", "id3"] }
+    const token =  req.body.resigninkey; // Expecting: { userIds: ["id1", "id2", "id3"] }
    
-    console.log("userIds",userIds);
-     let isValid = verifyJwtToken(resigninkey);
+    // console.log("userIds",userIds);
+    //  let isValid = verifyJwtToken(resigninkey);
+
+
+   //const isValid = jwt.verify(resigninkey, process.env.JWT_SECRET);
+// try {
+   // const secret = process.env.JWT_SECRET;
+   // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    let valid =await verifyJwtToken(token);
+  //   req.user = decoded; 
+  //   next();
+  // } catch (err) {
+  //   console.log("error");
+  //   return res.status(403).json({ error: 'Invalid or expired token.' });
+  // }
     
-     console.log("isValid",isValid);
-    if (isValid != false) {
+     // console.log("isValid",decoded);
+    if (valid) {
 
     if (userIds.length === 0) {
      // console.log("userIds.length",Array.isArray(userIds));
@@ -319,9 +332,9 @@ router.post('/delete', upload.none(), async (req, res) => {
     const response = success("Users soft-deleted successfully",result);
       return res.json(response);
 
-      }else if (isValid == false) {
+      }else if (valid == false) {
         console.log("not a valid jwt token");
-        let result = notFound("invalid token provided", "invalid_token");
+        let result = notFound("invalid resigninkey provided", "resigninkey");
         return res.json(result);
       }
   } catch (err) {
@@ -334,13 +347,14 @@ router.post('/delete', upload.none(), async (req, res) => {
 router.post('/restore', async (req, res) => {
   try {
     const userIds = req.body.userIds; // Expecting: { userIds: ["id1", "id2", "id3"] }
-    const resigninkey =  req.body.resigninkey; // Expecting: { userIds: ["id1", "id2", "id3"] }
+    const jwtToken =  req.body.resigninkey; // Expecting: { userIds: ["id1", "id2", "id3"] }
    
 
-     let isValid = verifyJwtToken(resigninkey);
+     const isValid =await verifyJwtToken(jwtToken);
 
-    if (isValid != false) {
-  
+   
+    if (isValid) {
+   
     if (!Array.isArray(userIds) || userIds.length === 0) {
       const  response = error("No user IDs provided");
       return res.json(response);
@@ -356,7 +370,7 @@ router.post('/restore', async (req, res) => {
 
    }else if (isValid == false) {
         console.log("not a valid jwt token");
-        let result = notFound("invalid token provided", "invalid_token");
+        let result = notFound("invalid resigninkey provided", "resigninkey");
         return res.json(result);
     }
 
@@ -374,9 +388,9 @@ router.post('/block', async (req, res) => {
      const resigninkey =  req.body.resigninkey; // Expecting: { userIds: ["id1", "id2", "id3"] }
    
 
-     let isValid = verifyJwtToken(resigninkey);
+     let isValid = await verifyJwtToken(resigninkey);
 
-    if (isValid != false) {
+    if (isValid) {
 
     if (!Array.isArray(userIds) || userIds.length === 0) {
        const  response = error("No user IDs provided");
@@ -394,7 +408,7 @@ router.post('/block', async (req, res) => {
 
   }else if (isValid == false) {
         console.log("not a valid jwt token");
-        let result = notFound("invalid token provided", "invalid_token");
+        let result = notFound("invalid resigninkey provided", "resigninkey");
         return res.json(result);
   }
 
@@ -414,9 +428,9 @@ router.post('/suspend-multiple', async (req, res) => {
      const resigninkey =  req.body.resigninkey; // Expecting: { userIds: ["id1", "id2", "id3"] }
    
 
-     let isValid = verifyJwtToken(resigninkey);
+     let isValid =await verifyJwtToken(resigninkey);
 
-    if (isValid != false) {
+    if (isValid) {
 
 
     if (!Array.isArray(userIds) || userIds.length === 0) {
@@ -434,7 +448,7 @@ router.post('/suspend-multiple', async (req, res) => {
 
   }else if (isValid == false) {
         console.log("not a valid jwt token");
-        let result = notFound("invalid token provided", "invalid_token");
+        let result = notFound("invalid resigninkey provided", "invalid_token");
         return res.json(result);
   }
 

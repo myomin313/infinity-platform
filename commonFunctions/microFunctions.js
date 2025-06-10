@@ -29,9 +29,11 @@ let microFun = {
 
   verifyJwtToken: async (token) => {
     try {
+      console.log("try verify");
       const decoded = jwt.verify(token, JWT_SECRET);
       return decoded;
     } catch (error) {
+      console.log("catch verify",error);
       console.error(error);
       return false;
     }
