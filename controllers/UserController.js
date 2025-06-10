@@ -39,8 +39,8 @@ const transporter = nodemailer.createTransport({
   port: 587,                         // TLS port
   secure: false,                     // Use STARTTLS, not SSL
   auth: {
-    user: process.env.sendMail,  // Your full Outlook email
-    pass: process.env.sendMailPass, // See below for important note
+    user: process.env.EMAIL_SENDER,  // Your full Outlook email
+    pass: process.env.EMAIL_PASSWORD, // See below for important note
   },
   tls: {
     ciphers: 'SSLv3'
@@ -52,7 +52,7 @@ const sendResetEmail = async (to, link) => {
   //console.log("user",process.env.sendMail);
     try {
 let info = await transporter.sendMail({
-  from: `"OST Platform" <${process.env.sendMail}>`,
+  from: `"OST Platform" <${process.env.EMAIL_SENDER}>`,
   to: `${to}`,
   subject: "Welcome to OST Platform - Verify Your Email",
   text: `Please use this to verify your email.`,

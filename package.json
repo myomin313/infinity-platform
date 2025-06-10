@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon --require dotenv/config app.js dotenv_config_path=./.env",
-    "start": "node app.js",
-    "prod": "NODE_ENV=production node app.js",
+    "start": "node -r dotenv/config app.js",
+    "prod": "NODE_ENV=production node -r dotenv/config app.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
