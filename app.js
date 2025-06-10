@@ -4,8 +4,6 @@ const mongoose = require('mongoose');
 const http = require('http');
 const https = require('https');
 const Log = require('./models/logsModel');
-
-
 const contactController = require("./controllers/contactController");
 const productController = require('./controllers/ProductController');
 const UserController = require('./controllers/UserController');
@@ -20,6 +18,7 @@ const ApplicantController = require('./controllers/ApplicantController');
 const PaymentController = require('./controllers/paymentController');
 // Initialize Express
 const app = express();
+const router = express.Router();
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -39,7 +38,8 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./app.js'], // path to API docs
+  apis: ['./controllers/*.js'],
+
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
@@ -95,11 +95,12 @@ app.use(async (req, res, next) => {
 });
 
 // Routes
-const router = express.Router();
-router.get('/', (req, res) => res.json({ 
-  status: 'OST API Running',
-  dbState: mongoose.connection.readyState 
-}));
+
+app.use('/', router);
+// router.get('/', (req, res) => res.json({ 
+//   status: 'OST API Running',
+//   dbState: mongoose.connection.readyState 
+// }));
 app.use('/uploads', express.static('uploads'));
 // Import and mount controllers
 app.use("/contact", contactController);
@@ -122,9 +123,10 @@ app.use((err, req, res, next) => {
 
 // Server Initialization with Port Conflict Handling
 const port = 9003;
-const server = process.env.NODE_ENV === 'production' 
-  ? https.createServer(app) 
-  : http.createServer(app);
+const server = http.createServer(app); // Simplify unless HTTPS is configured
+// const server = process.env.NODE_ENV === 'production' 
+//   ? https.createServer(app) 
+//   : http.createServer(app);
 
 // Check if port is available before listening
 const net = require('net');
