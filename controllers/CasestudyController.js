@@ -45,8 +45,6 @@ router.post("/create", upload.single("logo"), async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const cases = await CaseStudy.find().sort({ createdAt: -1 });
-
-    // Dynamically update each logoUrl with domain
     const updatedCases = cases.map(cs => {
       const caseObj = cs.toObject(); // convert Mongoose doc to plain object
       if (caseObj.logoUrl && !caseObj.logoUrl.startsWith("http")) {
