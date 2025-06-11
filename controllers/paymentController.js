@@ -71,8 +71,7 @@ router.post("/create-payment-intent", upload.none(), async (req, res) => {
       });
       await order.save();
 
-
-          res.send({ clientSecret: paymentIntent.client_secret });
+    return res.send({ clientSecret: paymentIntent.client_secret });
 
     }
   } catch (err) {
