@@ -26,7 +26,7 @@ const {
 const multer = require('multer');
 const upload = multer();
 const nodemailer = require("nodemailer");
-
+const crypto = require('crypto');
 
 function isValidEmail(email) {
   const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
@@ -231,105 +231,163 @@ router.post("/signup", upload.none(), async (req, res) => {
 });
 
 
-// Modify User Endpoint
-router.put('/:id', async (req, res) => {
-  try {
 
-     let isRequired = checkRequiredFields(["name","email", "userName", "password","role","accountType","accountLimitation"], req.body);
+// router.put('/:id', async (req, res) => {
+//   try {
 
-    if (isRequired) {
-      console.log("send required fields response");
-      let response = requiredParams(isRequired);
-      return res.json(response);
-    } else {
+//      let isRequired = checkRequiredFields(["name","email", "userName", "password","role","accountType","accountLimitation"], req.body);
 
-    const resigninkey =  req.body.resigninkey; // Expecting: { userIds: ["id1", "id2", "id3"] }
+//     if (isRequired) {
+//       console.log("send required fields response");
+//       let response = requiredParams(isRequired);
+//       return res.json(response);
+//     } else {
+
+//     const resigninkey =  req.body.resigninkey; // Expecting: { userIds: ["id1", "id2", "id3"] }
   
-     let issigninValid = verifyJwtToken(resigninkey);
+//      let issigninValid = verifyJwtToken(resigninkey);
 
-    if (issigninValid != false) {
+//     if (issigninValid != false) {
 
-    const userId = req.params.id;
-    // const updates = req.body;
-      let name = req.body.name;
-      let email = req.body.email;
-      let userName = req.body.userName;
-      let accountType = req.body.accountType;
-      let startDate = req.body.startDate;
-      let expireDate = req.body.expireDate;
-      let accountLimitation = req.body.accountLimitation;
-      let role = req.body.role;
-      let enabled = req.body.enabled;
-      let endpoint = req.body.endpoint;
-      let weather = req.body.weather;
-      let map = req.body.map;
-      let analytics = req.body.analytics;
-      let report = req.body.report;
-      let alert = req.body.alert;
-      let allowedUnmanaged = req.body.allowedUnmanaged;
-      let devSecOps = req.body.devSecOps;
-      let devOps = req.body.devOps;
-      let soc = req.body.soc;
-      let sourceCode = req.body.sourceCode;
+//     const userId = req.params.id;
+//     // const updates = req.body;
+//       let name = req.body.name;
+//       let email = req.body.email;
+//       let userName = req.body.userName;
+//       let accountType = req.body.accountType;
+//       let startDate = req.body.startDate;
+//       let expireDate = req.body.expireDate;
+//       let accountLimitation = req.body.accountLimitation;
+//       let role = req.body.role;
+//       let enabled = req.body.enabled;
+//       let endpoint = req.body.endpoint;
+//       let weather = req.body.weather;
+//       let map = req.body.map;
+//       let analytics = req.body.analytics;
+//       let report = req.body.report;
+//       let alert = req.body.alert;
+//       let allowedUnmanaged = req.body.allowedUnmanaged;
+//       let devSecOps = req.body.devSecOps;
+//       let devOps = req.body.devOps;
+//       let soc = req.body.soc;
+//       let sourceCode = req.body.sourceCode;
 
 
-      const isValid = isValidEmail(email);
+//       const isValid = isValidEmail(email);
 
-  if (isValid) {
-      const updateFields = {
-      name,
-      userName,
-      email,
-      accountType,
-      startDate,
-      expireDate,
-      accountLimitation,
-      role,
-      enabled,
-      endpoint,
-      weather,
-      map,
-      analytics,
-      report,
-      alert,
-      allowedUnmanaged,
-      devSecOps,
-      devOps,
-      soc,
-      sourceCode
-    };
+//   if (isValid) {
+//       const updateFields = {
+//       name,
+//       userName,
+//       email,
+//       accountType,
+//       startDate,
+//       expireDate,
+//       accountLimitation,
+//       role,
+//       enabled,
+//       endpoint,
+//       weather,
+//       map,
+//       analytics,
+//       report,
+//       alert,
+//       allowedUnmanaged,
+//       devSecOps,
+//       devOps,
+//       soc,
+//       sourceCode
+//     };
 
-     const updatedUser = await userModel.findByIdAndUpdate(
-       userId,
-       { $set:updateFields},
-       { new: true }
-     );
+//      const updatedUser = await userModel.findByIdAndUpdate(
+//        userId,
+//        { $set:updateFields},
+//        { new: true }
+//      );
 
-     if (!updatedUser) {
-      const response = error("User not found");
-       return res.json(response);
-     }
-     const response = success('User updated successfully',updatedUser)
-      res.json(response);
-    }else{
-       console.log("invalid part called");
-       let response = invalidEmail();
-       return res.json(response);
-     }
+//      if (!updatedUser) {
+//       const response = error("User not found");
+//        return res.json(response);
+//      }
+//      const response = success('User updated successfully',updatedUser)
+//       res.json(response);
+//     }else{
+//        console.log("invalid part called");
+//        let response = invalidEmail();
+//        return res.json(response);
+//      }
 
-     }else if (issigninValid == false) {
-        console.log("not a valid jwt token");
-        let result = notFound("invalid token provided", "invalid_token");
-        return res.json(result);
-      }
+//      }else if (issigninValid == false) {
+//         console.log("not a valid jwt token");
+//         let result = notFound("invalid token provided", "invalid_token");
+//         return res.json(result);
+//       }
 
-     }
+//      }
+//   } catch (err) {
+//     console.error('Update error:', err);
+//     const response = error(err.message );
+//     res.json({ message: 'Server error', error: err.message });
+//   }
+// });
+
+//request body should like  {
+//   "users": [
+//     {
+//       "userId": "123",
+//       "updates": {
+//         "adminPermissions": "System Admin",
+//         "enabled": true
+//       }
+//     },
+//     {
+//       "userId": "456",
+//       "updates": {
+//         "adminPermissions": "Security Admin",
+//         "accountLimitation": "Standard"
+//       }
+//     },
+//     {
+//       "userId": "789",
+//       "updates": {
+//         "expirationDate": "2026-12-31",
+//         "enabled": false
+//       }
+//     }
+//   ]
+// }
+
+router.put('/update', async (req, res) => {
+  // console.log("Hello",req.body);
+  const { users }  = req.body;
+
+  if (!Array.isArray(users) || users.length === 0) {
+    return res.status(400).json({ error: "Users array is required." });
+  }
+  try {
+    const updateResults = await Promise.all(users.map(async ({ userId, updates }) => {
+      if (!userId || !updates) return null;
+
+    const updatedUser = await userModel.findByIdAndUpdate(
+        userId,
+        { $set: updates },
+        { new: true }
+      );
+      return updatedUser;
+    }));
+
+    const successfulUpdates = updateResults.filter(Boolean);
+
+    const response = success("user(s) updated successfully",successfulUpdates);
+    return res.json(response); 
   } catch (err) {
-    console.error('Update error:', err);
-    const response = error(err.message );
-    res.json({ message: 'Server error', error: err.message });
+    console.log("errors", err);
+    const response = error(err.message)
+   return res.json(response);
   }
 });
+
+
 // Soft Delete User
 router.post('/delete', upload.none(), async (req, res) => {
   try {
@@ -532,14 +590,22 @@ router.post('/forgot-password',upload.none(), async (req, res) => {
      
         return res.json(response);
     }
-
+    // const {email} = req.body;
     const email= req.body.email;
     const user = await userModel.findOne({ email });
     if (!user){
        const response = error("User not found");
        return res.json(response);
     } 
-    const resetLink = `${process.env.APP_URL}/reset-password/${user._id}`;
+
+      // 2. Generate reset token (valid for 1 hour)
+    const token = crypto.randomBytes(20).toString('hex');
+    user.resetPasswordToken = token;
+    user.resetPasswordExpire = Date.now() + 3600000; // 1 hour
+    await user.save();
+
+
+    const resetLink = `${process.env.APP_URL}/reset-password/${token}`;
     await sendResetEmail(user.email, resetLink);
     const response = success("Password reset email sent successfully",user.email);
     return res.json(response);
@@ -562,17 +628,25 @@ router.post('/reset-password/:token',upload.none(), async (req, res) => {
       let response = requiredParams(isRequired);
       return res.json(response);
   }else{
-
+    // 1. Find user by token and check expiration
+    const user = await userModel.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpire: { $gt: Date.now() }
+    });
+    if (!user) {
+       const response = error("Invalid or expired token");
+       return res.json(response);
+    }
     const password = req.body.password;
-  const updatedUser = await userModel.findByIdAndUpdate(
-  token,
-  {
-    password: password,
-  },
-  { new: true } // return updated doc
-);
-   const response = success("Password reset successfully")
-    res.json(response);
+    const hash = await bcrypt.hash(password, saltRounds);
+
+    user.password = hash;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+  
+    const response = success("Password reset successfully")
+      res.json(response);
     }
   } catch (err) {
     console.error(err);

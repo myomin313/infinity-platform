@@ -16,6 +16,7 @@ const AuthController = require('./controllers/AuthController');
 const JobController = require('./controllers/JobController');
 const ApplicantController = require('./controllers/ApplicantController');
 const PaymentController = require('./controllers/paymentController');
+const ContactUsController = require('./controllers/ContactUsController');
 // Initialize Express
 const app = express();
 const router = express.Router();
@@ -115,6 +116,7 @@ app.use('/auth',AuthController);
 app.use('/job',JobController);
 app.use('/apply',ApplicantController);
 app.use('/payment',PaymentController);
+app.use('/contact-us',ContactUsController);
 // Error Handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
