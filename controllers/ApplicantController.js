@@ -44,13 +44,15 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-  /**
+/**
  * @swagger
  * /apply:
  *   post:
- *     summary: Submit a job application
+ *     summary: Submit a new job application with uploaded documents
  *     tags:
- *       - Job Application
+ *       - Applicants
+ *     consumes:
+ *       - multipart/form-data
  *     requestBody:
  *       required: true
  *       content:

@@ -100,6 +100,264 @@ const createSendToken = (user,  res) => {
      })
      res.json(response);
 };
+
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: User management APIs
+ */
+
+/**
+ * @swagger
+ * /user/signup:
+ *   post:
+ *     tags: [Users]
+ *     summary: Register a new user
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: formData
+ *         name: name
+ *         type: string
+ *         required: true
+ *       - in: formData
+ *         name: email
+ *         type: string
+ *         required: true
+ *       - in: formData
+ *         name: userName
+ *         type: string
+ *         required: true
+ *       - in: formData
+ *         name: password
+ *         type: string
+ *         required: true
+ *       - in: formData
+ *         name: role
+ *         type: string
+ *         required: true
+ *       - in: formData
+ *         name: accountType
+ *         type: string
+ *         required: true
+ *       - in: formData
+ *         name: accountLimitation
+ *         type: string
+ *         required: true
+ *       # Add other form fields similarly (startDate, expireDate, enabled, etc.)
+ *     responses:
+ *       200:
+ *         description: User created successfully or error response
+ */
+
+/**
+ * @swagger
+ * /user/update:
+ *   put:
+ *     tags: [Users]
+ *     summary: Update multiple users
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               users:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     userId:
+ *                       type: string
+ *                     updates:
+ *                       type: object
+ *     responses:
+ *       200:
+ *         description: Users updated successfully
+ */
+
+/**
+ * @swagger
+ * /user/delete:
+ *   post:
+ *     tags: [Users]
+ *     summary: Soft delete multiple users
+ *     consumes:
+ *       - application/x-www-form-urlencoded
+ *     parameters:
+ *       - in: formData
+ *         name: userIds
+ *         type: array
+ *         items:
+ *           type: string
+ *         required: true
+ *       - in: formData
+ *         name: resigninkey
+ *         type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Users soft deleted successfully
+ */
+
+/**
+ * @swagger
+ * /user/restore:
+ *   post:
+ *     tags: [Users]
+ *     summary: Restore soft deleted users
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               resigninkey:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Users restored successfully
+ */
+
+/**
+ * @swagger
+ * /user/block:
+ *   post:
+ *     tags: [Users]
+ *     summary: Block multiple users from logging in
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               resigninkey:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Users blocked successfully
+ */
+
+/**
+ * @swagger
+ * /user/suspend-multiple:
+ *   post:
+ *     tags: [Users]
+ *     summary: Suspend multiple users
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               resigninkey:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Users suspended successfully
+ */
+
+/**
+ * @swagger
+ * /user/login:
+ *   post:
+ *     tags: [Users]
+ *     summary: Login user with email or username and password
+ *     consumes:
+ *       - application/x-www-form-urlencoded
+ *     parameters:
+ *       - in: formData
+ *         name: identifier
+ *         type: string
+ *         description: Email or username
+ *         required: true
+ *       - in: formData
+ *         name: password
+ *         type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Login successful with token
+ */
+
+/**
+ * @swagger
+ * /user/forgot-password:
+ *   post:
+ *     tags: [Users]
+ *     summary: Request password reset email
+ *     consumes:
+ *       - application/x-www-form-urlencoded
+ *     parameters:
+ *       - in: formData
+ *         name: email
+ *         type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Password reset email sent
+ */
+
+/**
+ * @swagger
+ * /user/reset-password/{token}:
+ *   post:
+ *     tags: [Users]
+ *     summary: Reset password using token
+ *     consumes:
+ *       - application/x-www-form-urlencoded
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Password reset token
+ *       - in: formData
+ *         name: password
+ *         type: string
+ *         required: true
+ *         description: New password to set
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ *       400:
+ *         description: Missing or invalid fields
+ *       401:
+ *         description: Invalid or expired token
+ *       500:
+ *         description: Internal server error
+ */
+
+
+/**
+ * @swagger
+ * /user/:
+ *   get:
+ *     tags: [Users]
+ *     summary: Get list of users
+ *     responses:
+ *       200:
+ *         description: List of users returned successfully
+ */
+
 router.post("/signup", upload.none(), async (req, res) => {
  
   try {

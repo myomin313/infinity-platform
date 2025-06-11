@@ -17,6 +17,7 @@ const {
 
 /**
  * @swagger
+<<<<<<< HEAD
  * /service:
  *   get:
  *     summary: Retrieve all services
@@ -25,6 +26,19 @@ const {
  *     responses:
  *       200:
  *         description: Successfully retrieved services
+=======
+ * tags:
+ *   - name: Services
+ *     description: Service management endpoints
+ * 
+ * /service:
+ *   get:
+ *     summary: Retrieve all services
+ *     tags: [Services]
+ *     responses:
+ *       200:
+ *         description: List of all services
+>>>>>>> 87f0137 (update swagger endpoint)
  *         content:
  *           application/json:
  *             schema:
