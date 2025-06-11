@@ -73,7 +73,7 @@ router.post("/", upload.none(), async (req, res) => {
     text,
     url
   }));
-; // Add minimum similarity threshold
+// Add minimum similarity threshold
    const response = success("search result",results.length > 0 ? results : []);
     res.json(response);
   } catch (err) {
