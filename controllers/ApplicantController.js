@@ -44,6 +44,106 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+  /**
+ * @swagger
+ * /apply:
+ *   post:
+ *     summary: Submit a job application
+ *     tags:
+ *       - Job Application
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - jobId
+ *               - salutation
+ *               - firstName
+ *               - surname
+ *               - country
+ *               - postcode
+ *               - city
+ *               - street
+ *               - house
+ *               - dob
+ *               - email
+ *               - emailRepeat
+ *               - telephone
+ *               - authorizedToWork
+ *               - requiredVisa
+ *               - accessPersonalData
+ *               - currentWorkingOstGroup
+ *               - privacyPolicy
+ *             properties:
+ *               jobId:
+ *                 type: string
+ *               salutation:
+ *                 type: string
+ *               title:
+ *                 type: string
+ *               firstName:
+ *                 type: string
+ *               surname:
+ *                 type: string
+ *               surnameTitle:
+ *                 type: string
+ *               country:
+ *                 type: string
+ *               postcode:
+ *                 type: string
+ *               city:
+ *                 type: string
+ *               street:
+ *                 type: string
+ *               house:
+ *                 type: string
+ *               dob:
+ *                 type: string
+ *                 format: date
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               emailRepeat:
+ *                 type: string
+ *                 format: email
+ *               telephone:
+ *                 type: string
+ *               authorizedToWork:
+ *                 type: string
+ *               requiredVisa:
+ *                 type: string
+ *               accessPersonalData:
+ *                 type: string
+ *               currentWorkingOstGroup:
+ *                 type: string
+ *               privacyPolicy:
+ *                 type: string
+ *               documents:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *     responses:
+ *       200:
+ *         description: Application submitted and email sent to HR
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Email mismatch or missing required fields
+ *       500:
+ *         description: Server error during application process
+ */
+
+
 // ========== Endpoint ==========
 router.post("/", upload.array("documents"), async (req, res) => {
   try {

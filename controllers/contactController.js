@@ -34,6 +34,71 @@ function isValidEmail(email) {
   return emailPattern.test(email);
 }
 // endpoint for contact send mail
+
+/**
+ * @swagger
+ * /contact/send:
+ *   post:
+ *     summary: Submit the contact form
+ *     tags:
+ *       - Contact
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - contactNumber
+ *               - address
+ *               - city
+ *               - country
+ *               - captcha
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               contactNumber:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               addressTwo:
+ *                 type: string
+ *               city:
+ *                 type: string
+ *               country:
+ *                 type: string
+ *               saas:
+ *                 type: string
+ *               hosted:
+ *                 type: string
+ *               desiredDate:
+ *                 type: string
+ *               captcha:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Contact form successfully submitted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Captcha verification failed or missing required fields
+ *       500:
+ *         description: Internal server error
+ */
+
+
 router.post("/send", upload.none(), async (req, res) => {
   
   try {
