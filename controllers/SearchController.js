@@ -41,6 +41,83 @@ function cosineSimilarity(a, b) {
   return dot / (normA * normB);
 }
 
+/**
+ * @swagger
+ * /search:
+ *   post:
+ *     summary: Search documents using text query and embedding similarity
+ *     tags:
+ *       - search
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - query
+ *             properties:
+ *               query:
+ *                 type: string
+ *                 description: The search query text
+ *     responses:
+ *       200:
+ *         description: Search results returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: search result
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "doc123"
+ *                       text:
+ *                         type: string
+ *                         example: "Sample matching document text"
+ *                       url:
+ *                         type: string
+ *                         format: uri
+ *                         example: "https://example.com/doc/123"
+ *       400:
+ *         description: Missing required fields (e.g., query)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: "Missing required fields: query"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error
+ *                 details:
+ *                   type: string
+ *                   example: Detailed error message
+ */
+
+
 router.post("/", upload.none(), async (req, res) => {
   const { query } = req.body;
 
@@ -77,11 +154,13 @@ router.post("/", upload.none(), async (req, res) => {
    const response = success("search result",results.length > 0 ? results : []);
     res.json(response);
   } catch (err) {
-    console.error("Search error:", err);
-    res.status(500).json({ 
-      error: "Internal server error",
-      details: err.message 
-    });
+    //console.error("Search error:", err);
+    const response = error(err.message)
+    return res.json(response);
+    // res.status(500).json({ 
+    //   error: "Internal server error",
+    //   details: err.message 
+    // });
   }
 });
 

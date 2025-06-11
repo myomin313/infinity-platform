@@ -19,6 +19,69 @@ const {
 const multer = require('multer');
 const upload = multer();
 
+
+/**
+ * @swagger
+ * /payment/create-payment-intent:
+ *   post:
+ *     summary: Create a Stripe payment intent and save order details
+ *     tags:
+ *       - Payment
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - serviceId
+ *               - quantity
+ *               - customerEmail
+ *               - customerName
+ *               - address
+ *               - city
+ *               - country
+ *             properties:
+ *               serviceId:
+ *                 type: string
+ *               quantity:
+ *                 type: integer
+ *               customerEmail:
+ *                 type: string
+ *                 format: email
+ *               customerName:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               city:
+ *                 type: string
+ *               country:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Payment intent created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 clientSecret:
+ *                   type: string
+ *                   description: Stripe client secret for frontend usage
+ *       400:
+ *         description: Required fields missing or invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Internal server error during payment processing
+ */
+
+
 router.post("/create-payment-intent", upload.none(), async (req, res) => {
   try {
     console.log("job module", req.body);

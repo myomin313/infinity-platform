@@ -15,6 +15,56 @@ const {
   notFound
 } = require("../commonFunctions/response")
 
+/**
+ * @swagger
+ * /service:
+ *   get:
+ *     summary: Retrieve all services
+ *     tags:
+ *       - Services
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved services
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "64aaf3fbbd1234567890abcd"
+ *                       name:
+ *                         type: string
+ *                         example: "Consulting Service"
+ *                       description:
+ *                         type: string
+ *                         example: "Provides expert consulting."
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
+
 router.get("/", async (req, res) => {
  try {
     const services = await serviceModel.find({});  
@@ -26,6 +76,32 @@ router.get("/", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /service/download:
+ *   get:
+ *     summary: Download the service PDF file
+ *     tags:
+ *       - Services
+ *     responses:
+ *       200:
+ *         description: Service PDF file downloaded successfully
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       500:
+ *         description: File not found or unable to download
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: File not found or unable to download.
+ */
 router.get("/download", async (req, res) => {
   const filePath = path.join(__dirname, '../commonFunctions', 'service.pdf');
 

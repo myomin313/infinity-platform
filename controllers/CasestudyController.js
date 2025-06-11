@@ -17,6 +17,59 @@ const {
 
 
 // POST /api/case-studies
+/**
+ * @swagger
+ * /case-study/create:
+ *   post:
+ *     summary: Create a new case study
+ *     tags:
+ *       - Case Study
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - description
+ *               - industry
+ *               - clientName
+ *               - country
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               industry:
+ *                 type: string
+ *               clientName:
+ *                 type: string
+ *               country:
+ *                 type: string
+ *               logo:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Case study created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: case study created
+ *                 data:
+ *                   type: object
+ *       500:
+ *         description: Internal server error
+ */
+
 router.post("/create", upload.single("logo"), async (req, res) => {
   try {
     const { title, description, industry, clientName, country } = req.body;
@@ -41,6 +94,53 @@ router.post("/create", upload.single("logo"), async (req, res) => {
      return res.json(response);
   }
 });
+/**
+ * @swagger
+ * /case-study:
+ *   get:
+ *     summary: Get all case studies
+ *     tags:
+ *       - Case Study
+ *     responses:
+ *       200:
+ *         description: A list of case studies
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       title:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                       industry:
+ *                         type: string
+ *                       clientName:
+ *                         type: string
+ *                       country:
+ *                         type: string
+ *                       logoUrl:
+ *                         type: string
+ *                         example: https://yourdomain.com/uploads/logo.png
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *       500:
+ *         description: Internal server error
+ */
 
 router.get("/", async (req, res) => {
   try {
@@ -58,6 +158,64 @@ router.get("/", async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+/**
+ * @swagger
+ * /case-study/search:
+ *   get:
+ *     summary: Search case studies by title or industry
+ *     tags:
+ *       - Case Study
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         schema:
+ *           type: string
+ *         description: Search keyword for case study title
+ *       - in: query
+ *         name: industry
+ *         schema:
+ *           type: string
+ *         description: Industry to filter case studies
+ *     responses:
+ *       200:
+ *         description: Filtered case studies
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       title:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                       industry:
+ *                         type: string
+ *                       clientName:
+ *                         type: string
+ *                       country:
+ *                         type: string
+ *                       logoUrl:
+ *                         type: string
+ *                         example: https://yourdomain.com/uploads/logo.png
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *       500:
+ *         description: Internal server error
+ */
 
 
 router.get("/search", async (req, res) => {

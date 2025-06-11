@@ -65,6 +65,64 @@ let info = await transporter.sendMail({
 
 };
 
+/**
+ * @swagger
+ * /auth/subscribe:
+ *   post:
+ *     summary: Subscribe with email and send verification link
+ *     tags:
+ *       - Subscription
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Email address to subscribe
+ *     responses:
+ *       200:
+ *         description: Verification email sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Verification email sent
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     email:
+ *                       type: string
+ *                       format: email
+ *                       example: user@example.com
+ *                     token:
+ *                       type: string
+ *                       example: "9f1b7e2a3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f"
+ *       500:
+ *         description: Nodemailer or server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                 example: "Nodemailer error: <error message>"
+ */
 
 router.post('/subscribe', upload.none(), async (req, res) => {
   //  console.log("req body",req.body);
@@ -91,6 +149,48 @@ router.post('/subscribe', upload.none(), async (req, res) => {
    return res.json(fail);
   }
 });
+/**
+ * @swagger
+ * /auth/verify:
+ *   get:
+ *     summary: Verify email subscription token
+ *     tags:
+ *       - Subscription
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The verification token sent via email
+ *     responses:
+ *       200:
+ *         description: Email verified successfully or error message
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Email verified successfully
+ *       400:
+ *         description: Invalid or expired token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Invalid token
+ */
 
 router.get('/verify', (req, res) => {
   const token = req.query.token;

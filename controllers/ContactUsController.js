@@ -34,6 +34,56 @@ function isValidEmail(email) {
   return emailPattern.test(email);
 }
 // endpoint for contact send mail
+/**
+ * @swagger
+ * /contact-us/submit:
+ *   post:
+ *     summary: Submit a contact-us form for product inquiry
+ *     tags:
+ *       - Contact Us
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - contactNumber
+ *               - productName
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               contactNumber:
+ *                 type: string
+ *               productName:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Contact form submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: contact form submit success
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Missing required fields or invalid email
+ *       500:
+ *         description: Internal server error
+ */
+
 router.post("/submit", upload.none(), async (req, res) => {
   
   try {

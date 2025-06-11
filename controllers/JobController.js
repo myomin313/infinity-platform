@@ -22,6 +22,93 @@ function generateRequisitionId() {
   return Math.floor(100000 + Math.random() * 900000); // 6-digit number
 }
 
+/**
+ * @swagger
+ * /job/create:
+ *   post:
+ *     summary: Create a new job entry
+ *     tags:
+ *       - Job
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - workArea
+ *               - to_do
+ *               - to_bring
+ *             properties:
+ *               title:
+ *                 type: string
+ *               workArea:
+ *                 type: string
+ *               to_do:
+ *                 type: string
+ *               to_bring:
+ *                 type: string
+ *               offer:
+ *                 type: string
+ *               careerStatus:
+ *                 type: string
+ *               employmentType:
+ *                 type: string
+ *               expectedTravel:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Job created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: your job is successfully created
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     title:
+ *                       type: string
+ *                     toDo:
+ *                       type: string
+ *                     toBring:
+ *                       type: string
+ *                     offer:
+ *                       type: string
+ *                     requisitionId:
+ *                       type: string
+ *                     workArea:
+ *                       type: string
+ *                     careerStatus:
+ *                       type: string
+ *                     employmentType:
+ *                       type: string
+ *                     expectedTravel:
+ *                       type: string
+ *                     location:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       500:
+ *         description: Server error during job creation
+ */
+
+
 router.post("/create", upload.none(), async (req, res) => {
  
   try {
