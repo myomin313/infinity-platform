@@ -829,7 +829,7 @@ router.post("/login", upload.none(), async (req, res) => {
     // Verify password
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-        let response = error("incorrect password, try again", "incorrect_key");
+        let response = error("incorrect password, try again");
         return res.json(response);
     }
     console.log("user",user);

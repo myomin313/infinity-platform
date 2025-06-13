@@ -21,6 +21,7 @@ const pendingSubscriptions = new Map();
 const APP_URL = process.env.APP_URL;
 const multer = require('multer');
 const upload = multer();
+const RecoveryRequest = require('../models/recoveryModel');
 
 const transporter = nodemailer.createTransport({
   host: "smtp.office365.com",        // Outlook SMTP server
@@ -34,6 +35,36 @@ const transporter = nodemailer.createTransport({
     ciphers: 'SSLv3'
   }
 });
+
+const sendRecoveryNotice = async(to,type)=>{
+   
+      try {
+let info = await transporter.sendMail({
+  from: `"OST Platform" <${process.env.EMAIL_SENDER}>`,
+  to: `${to}`,
+  subject: "Welcome to OST Platform - Verify Your Email",
+  text: `Please use this to verify your email.`,
+  html: `
+    <div style="max-width:600px;margin:0 auto;font-family:Arial,sans-serif;border:1px solid #eee;border-radius:6px;">
+      <div style="background:#0078ff;color:#fff;padding:20px;text-align:center;border-top-left-radius:6px;border-top-right-radius:6px;">
+        <h2 style="margin:0;"> OST Platform</h2>
+      </div>
+      <div style="padding:30px;">
+        <p> OST Platform!</p>
+        <p>We're thrilled to have you on board. To get started and ensure your account is secure, please use click the link Below.</p>
+        <p style="font-size:16px;"> <span style="color:#0078ff;font-weight:bold;font-size:20px;"><a href="${link}">${link}</a></span></p>
+        <p>Welcome aboard, and happy exploring!</p>
+        <p style="margin-top:40px;">Best regards,<br/>Team OST</p>
+      </div>
+    </div>
+  `,
+});
+} catch (err) {
+     console.error("Nodemailer:", err);
+   
+   }
+
+}
 
 const sendVerificationEmail = async (to, link) => {
   //console.log("user",process.env.sendMail);
@@ -212,5 +243,39 @@ router.get('/verify', (req, res) => {
   const response = success("Email verified successfully");
   res.json(response);
 });
+
+router.post('/account-recovery', async (req, res) => {
+  try {
+    const { email, issueType } = req.body;
+
+    if (!email || !issueType) {
+      return res.status(400).json({ message: 'Email and issue type are required.' });
+    }
+
+    const validTypes = ['lost-2fa', 'lost-email', 'forgot-email'];
+    if (!validTypes.includes(issueType)) {
+      return res.status(400).json({ message: 'Invalid issue type provided.' });
+    }
+
+    // Save recovery request
+    const request = new RecoveryRequest({
+      email,
+      issueType,
+      status: 'Pending',
+      requestedAt: new Date()
+    });
+
+    await request.save();
+
+    // Optional: Send internal notification or user email confirmation
+    await sendRecoveryNotice(email, issueType);
+
+    return res.status(200).json({ message: 'Your request has been submitted. It may take up to 2 working days.' });
+  } catch (err) {
+    console.error('Account recovery error:', err);
+    return res.status(500).json({ message: 'Server error while processing recovery request.' });
+  }
+});
+
 
 module.exports = router;

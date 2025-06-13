@@ -86,27 +86,27 @@ router.post("/create-payment-intent", upload.none(), async (req, res) => {
   try {
     console.log("job module", req.body);
 
-    let isRequired = checkRequiredFields(["serviceId","quantity", "customerEmail", "customerName","address","city","country"], req.body);
+   // let isRequired = checkRequiredFields(["serviceId","quantity", "customerEmail", "customerName","address","city","country"], req.body);
 
-    if (isRequired) {
-      console.log("send required fields response");
-      let response = requiredParams(isRequired);
-      return res.json(response);
-    } else {
+    // if (isRequired) {
+    //   console.log("send required fields response");
+    //   let response = requiredParams(isRequired);
+    //   return res.json(response);
+    // } else {
     
-      let serviceId = req.body.serviceId;
-      let quantity = req.body.quantity;
-      let customerEmail = req.body.customerEmail;
-      let customerName = req.body.customerName;
-      //let token = req.body.token;
-      let address = req.body.address;
-      let city = req.body.city;
-      let country = req.body.country;
+      // let serviceId = req.body.serviceId;
+      // let quantity = req.body.quantity;
+      // let customerEmail = req.body.customerEmail;
+      // let customerName = req.body.customerName;
+      // //let token = req.body.token;
+      // let address = req.body.address;
+      // let city = req.body.city;
+      // let country = req.body.country;
      
 
       // 3. Payment Processing
-      const amount = await calculateTotalAmount(serviceId, quantity); // Fetch from DB
-
+    //  const amount = await calculateTotalAmount(serviceId, quantity); // Fetch from DB
+      const amount = 100;
       console.log("amount",amount);
      
 
@@ -116,27 +116,28 @@ router.post("/create-payment-intent", upload.none(), async (req, res) => {
             currency: 'usd',
             payment_method_types: ['card'],
             metadata: {
-              customerEmail: customerEmail,  // Add the user ID here
+              customerEmail: "myomin313@gmail.com",  // Add the user ID here
             }
           });
-      const order = new Order({
-        serviceId,
-        quantity,
-        customerName,
-        customerEmail,
-        address,
-        city,
-        country,
-        amount,
-        chargeId: paymentIntent.id,
-        status: "Processing",
-        placedAt: new Date()
-      });
-      await order.save();
+      // const order = new Order({
+      //   serviceId,
+      //   quantity,
+      //   customerName,
+      //   customerEmail,
+      //   address,
+      //   city,
+      //   country,
+      //   amount,
+      //   chargeId: paymentIntent.id,
+      //   status: "Processing",
+      //   placedAt: new Date()
+      // });
+      // await order.save();
+      console.log("paymentIntent.client_secret",paymentIntent.client_secret);
 
     return res.send({ clientSecret: paymentIntent.client_secret });
 
-    }
+    // }
   } catch (err) {
     console.log({ err });
     let response = internalError();
