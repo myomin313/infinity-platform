@@ -17,6 +17,7 @@ const JobController = require('./controllers/JobController');
 const ApplicantController = require('./controllers/ApplicantController');
 const PaymentController = require('./controllers/paymentController');
 const ContactUsController = require('./controllers/ContactUsController');
+const CaptchaController = require('./controllers/CaptchaController');
 // Initialize Express
 const app = express();
 const router = express.Router();
@@ -53,6 +54,8 @@ app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // const bodyParser = require("body-parser");
 //app.use(bodyParser.json());
 //app.use(express.json());
+const cors = require('cors');
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -117,6 +120,7 @@ app.use('/job',JobController);
 app.use('/apply',ApplicantController);
 app.use('/payment',PaymentController);
 app.use('/contact-us',ContactUsController);
+app.use('/captcha',CaptchaController);
 // Error Handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
