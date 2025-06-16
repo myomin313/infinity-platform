@@ -15,6 +15,7 @@ const {
   internalError,
   notFound
 } = require("../commonFunctions/response");
+const authenticateToken = require('../commonFunctions/authenticateToken');
 
 const multer = require('multer');
 const upload = multer();
@@ -39,9 +40,11 @@ function isValidEmail(email) {
  * @swagger
  * /contact/send:
  *   post:
- *     summary: Submit the contact form
+ *     summary: Submit the contact form (JWT Protected)
  *     tags:
  *       - Contact
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -59,27 +62,39 @@ function isValidEmail(email) {
  *             properties:
  *               name:
  *                 type: string
+ *                 example: John Doe
  *               email:
  *                 type: string
  *                 format: email
+ *                 example: john.doe@example.com
  *               contactNumber:
  *                 type: string
+ *                 example: +1234567890
  *               address:
  *                 type: string
+ *                 example: 123 Main St
  *               addressTwo:
  *                 type: string
+ *                 example: Suite 456
  *               city:
  *                 type: string
+ *                 example: New York
  *               country:
  *                 type: string
+ *                 example: United States
  *               saas:
  *                 type: string
+ *                 example: Yes
  *               hosted:
  *                 type: string
+ *                 example: No
  *               desiredDate:
  *                 type: string
+ *                 example: 2025-07-01
  *               captcha:
  *                 type: string
+ *                 description: Captcha token for verification
+ *                 example: 03AGdBq27aL_example_token
  *     responses:
  *       200:
  *         description: Contact form successfully submitted
@@ -90,16 +105,43 @@ function isValidEmail(email) {
  *               properties:
  *                 status:
  *                   type: string
+ *                   example: success
  *                 data:
  *                   type: object
+ *                   example:
+ *                     message: Thank you for contacting us. We will get back to you soon.
  *       400:
  *         description: Captcha verification failed or missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Invalid captcha or missing fields
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Server encountered an error while processing the request
  */
 
 
-router.post("/send", upload.none(), async (req, res) => {
+
+
+router.post("/send", authenticateToken,upload.none(), async (req, res) => {
   
   try {
  

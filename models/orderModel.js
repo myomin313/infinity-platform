@@ -11,40 +11,30 @@ const orderSchema = new mongoose.Schema({
     type:Number,
      required: true
   },
-  customerName:{
+  userId:{
     type:String,
      required: true
-  },
-  customerEmail:{
-    type:String,
-     required: true
-  },
-  address:{
-    type:String,
-    required: true
-  },
-  city:{
-    type:String,
-    required: true
-  },
-  country:{
-    type:String,
-    required: true
   },
   amount: {
     type: Number,
     required: true
   },
-  currency: {
+  status: {
+    type: String,
+    enum: ["Processing", "Paid", "Failed", "Refunded"],
+    default: "Processing"
+  },
+   currency: {
     type: String,
     default: "USD"
   },
-  status: {
-    type: String,
-    enum: ["Pending", "Paid", "Failed", "Refunded"],
-    default: "Pending"
+  chargeId: {
+    type: String
   },
-  status: { type: String, default: "Processing" },
+  placedAt: {
+     type: Date,
+     default: Date.now
+  },
   createdAt: {
      type: Date,
      default: Date.now

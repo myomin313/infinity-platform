@@ -6,6 +6,7 @@ const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
 
 const contactUsModel = require('../models/contactUsModel');
 const { checkRequiredFields } = require("../commonFunctions/validate");
+const authenticateToken = require('../commonFunctions/authenticateToken');
 const {
   success,
   error,
@@ -37,9 +38,11 @@ function isValidEmail(email) {
  * @swagger
  * /contact-us/submit:
  *   post:
- *     summary: Submit a contact-us form for product inquiry
+ *     summary: Submit a contact-us form for product inquiry (JWT Protected)
  *     tags:
  *       - Contact Us
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -54,13 +57,21 @@ function isValidEmail(email) {
  *             properties:
  *               name:
  *                 type: string
+ *                 description: Full name of the user
+ *                 example: Jane Doe
  *               email:
  *                 type: string
  *                 format: email
+ *                 description: User's email address
+ *                 example: jane.doe@example.com
  *               contactNumber:
  *                 type: string
+ *                 description: Phone number for contact
+ *                 example: +1234567890
  *               productName:
  *                 type: string
+ *                 description: Name of the product inquired about
+ *                 example: AI-powered Document Search
  *     responses:
  *       200:
  *         description: Contact form submitted successfully
@@ -77,13 +88,41 @@ function isValidEmail(email) {
  *                   example: contact form submit success
  *                 data:
  *                   type: object
+ *                   example:
+ *                     id: 60f7b3f9c4e6c2b9f8a7d5e1
+ *                     name: Jane Doe
+ *                     email: jane.doe@example.com
+ *                     productName: AI-powered Document Search
  *       400:
  *         description: Missing required fields or invalid email
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Email is required and must be valid
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Something went wrong on the server
  */
 
-router.post("/submit", upload.none(), async (req, res) => {
+
+router.post("/submit",authenticateToken, upload.none(), async (req, res) => {
   
   try {
     let isRequired = checkRequiredFields(["name", "email","contactNumber","productName"], req.body);

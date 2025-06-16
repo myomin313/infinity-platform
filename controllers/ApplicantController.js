@@ -6,6 +6,10 @@ const applicantModel = require("../models/applicantModel");
 const path = require("path");
 const fs = require("fs");
 
+const authenticateToken = require('../commonFunctions/authenticateToken');
+
+
+
 const { checkRequiredFields } = require("../commonFunctions/validate");
 const {
   success,
@@ -48,9 +52,11 @@ const transporter = nodemailer.createTransport({
  * @swagger
  * /apply:
  *   post:
- *     summary: Submit a new job application with uploaded documents
+ *     summary: Submit a new job application with uploaded documents (JWT Protected)
  *     tags:
  *       - Applicants
+ *     security:
+ *       - bearerAuth: []
  *     consumes:
  *       - multipart/form-data
  *     requestBody:
@@ -140,14 +146,24 @@ const transporter = nodemailer.createTransport({
  *                 message:
  *                   type: string
  *       400:
- *         description: Email mismatch or missing required fields
+ *         description: Bad Request - Email mismatch or missing fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized - No token provided
+ *       403:
+ *         description: Forbidden - Invalid or expired token
  *       500:
- *         description: Server error during application process
+ *         description: Internal Server Error
  */
 
-
 // ========== Endpoint ==========
-router.post("/", upload.array("documents"), async (req, res) => {
+router.post("/",authenticateToken,upload.array("documents"), async (req, res) => {
   try {
     let isRequired = checkRequiredFields(["jobId","salutation", "firstName", "surname","country",
         "postcode","city","street","house","dob","email","emailRepeat","telephone","authorizedToWork",

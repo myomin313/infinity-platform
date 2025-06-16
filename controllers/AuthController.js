@@ -11,6 +11,7 @@ const {
   internalError,
   notFound
 } = require("../commonFunctions/response");
+const authenticateToken = require('../commonFunctions/authenticateToken');
 
 const crypto = require('crypto');
 
@@ -100,9 +101,11 @@ let info = await transporter.sendMail({
  * @swagger
  * /auth/subscribe:
  *   post:
- *     summary: Subscribe with email and send verification link
+ *     summary: Subscribe with email and send verification link (JWT Protected)
  *     tags:
  *       - Subscription
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -116,6 +119,7 @@ let info = await transporter.sendMail({
  *                 type: string
  *                 format: email
  *                 description: Email address to subscribe
+ *                 example: user@example.com
  *     responses:
  *       200:
  *         description: Verification email sent successfully
@@ -139,9 +143,13 @@ let info = await transporter.sendMail({
  *                       example: user@example.com
  *                     token:
  *                       type: string
- *                       example: "9f1b7e2a3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f"
+ *                       example: 9f1b7e2a3c4d5e6f7a8b9c0d1e2f3a4b
+ *       401:
+ *         description: Unauthorized - JWT token missing
+ *       403:
+ *         description: Forbidden - Invalid or expired JWT token
  *       500:
- *         description: Nodemailer or server error
+ *         description: Server error or email sending failed
  *         content:
  *           application/json:
  *             schema:
@@ -149,13 +157,14 @@ let info = await transporter.sendMail({
  *               properties:
  *                 status:
  *                   type: string
- *                   example: error
+ *                   example: Bad request
  *                 message:
  *                   type: string
- *                 example: "Nodemailer error: <error message>"
+ *                   example: "Nodemailer error: '<error message>'"
+
  */
 
-router.post('/subscribe', upload.none(), async (req, res) => {
+router.post('/subscribe',authenticateToken,upload.none(), async (req, res) => {
   //  console.log("req body",req.body);
   try {
   const email  = req.body.email;
@@ -184,9 +193,11 @@ router.post('/subscribe', upload.none(), async (req, res) => {
  * @swagger
  * /auth/verify:
  *   get:
- *     summary: Verify email subscription token
+ *     summary: Verify email subscription token (JWT Protected)
  *     tags:
  *       - Subscription
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: token
@@ -196,7 +207,7 @@ router.post('/subscribe', upload.none(), async (req, res) => {
  *         description: The verification token sent via email
  *     responses:
  *       200:
- *         description: Email verified successfully or error message
+ *         description: Email verified successfully
  *         content:
  *           application/json:
  *             schema:
@@ -220,14 +231,18 @@ router.post('/subscribe', upload.none(), async (req, res) => {
  *                   example: error
  *                 message:
  *                   type: string
- *                   example: Invalid token
+ *                   example: Token expired
+ *       401:
+ *         description: Unauthorized - JWT missing
+ *       403:
+ *         description: Forbidden - Invalid or expired JWT token
  */
 
-router.get('/verify', (req, res) => {
+router.get('/verify',authenticateToken,async (req, res) => {
   const token = req.query.token;
   console.log("token",token);
  
-  const subscription = pendingSubscriptions.get(token);
+  const subscription =await pendingSubscriptions.get(token);
 
   if (!subscription) {
     const response = error('Invalid token',)
@@ -238,13 +253,13 @@ router.get('/verify', (req, res) => {
     const response = error('Token expired',)
     return res.json(response);
   }
-  pendingSubscriptions.delete(token);
+   pendingSubscriptions.delete(token);
   console.log(`Verified email: ${subscription.email}`);
   const response = success("Email verified successfully");
   res.json(response);
 });
 
-router.post('/account-recovery', async (req, res) => {
+router.post('/account-recovery',authenticateToken, async (req, res) => {
   try {
     const { email, issueType } = req.body;
 

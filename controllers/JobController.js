@@ -12,7 +12,8 @@ const {
   invalidEmail,
   internalError,
   notFound
-} = require("../commonFunctions/response")
+} = require("../commonFunctions/response");
+const authenticateToken = require('../commonFunctions/authenticateToken');
 
 const multer = require('multer');
 const upload = multer();
@@ -26,9 +27,11 @@ function generateRequisitionId() {
  * @swagger
  * /job/create:
  *   post:
- *     summary: Create a new job entry
+ *     summary: Create a new job entry (JWT Protected)
  *     tags:
  *       - Job
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -108,8 +111,18 @@ function generateRequisitionId() {
  *         description: Server error during job creation
  */
 
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
 
-router.post("/create", upload.none(), async (req, res) => {
+
+router.post("/create",authenticateToken,upload.none(), async (req, res) => {
  
   try {
     console.log("job module", req.body);
@@ -157,7 +170,7 @@ router.post("/create", upload.none(), async (req, res) => {
 });
 
 
-router.get("/", async (req, res) => {
+router.get("/", authenticateToken,async (req, res) => {
  try {
      const jobs = await jobModel.find({ isActive: true }); 
     const response = success("your jobs are here", jobs);
@@ -170,7 +183,7 @@ router.get("/", async (req, res) => {
 
 
 
-router.get("/detail/:id", async (req, res) => {
+router.get("/detail/:id",authenticateToken, async (req, res) => {
   const jobId = req.params.id;
 
   try {

@@ -5,10 +5,41 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  userName: {
-    type: String,
-    unique: true,
-    required: true,
+  contactNumber:{
+    type:String,
+    required:true,
+  },
+  companyRegistrationNumber:{
+     type:String,
+    required:true, 
+  },
+  companySize:{
+    type:String,
+  },
+  level:{
+  type:String,
+  enum: ["founder", "cto", "developer", "product","other","Procurement Manager","User"],  
+  },
+  address1:{
+    type:String,
+    required:true,
+  },
+  address2:{
+    type:String,
+  },
+  city:{
+    type:String,
+    required:true,
+  },
+  country:{
+    type:String, 
+    required:true,
+  },
+  verificationCode: String,
+  verificationCodeExpires: Date,
+  desiredStartDate:{
+    type: Date,
+    default: Date.now
   },
   email: {
     type: String,
@@ -17,11 +48,14 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true
   },
   startDate:{
     type:Date,
     default:"",
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
   },
   expireDate:{
     type:Date,
@@ -33,15 +67,12 @@ const userSchema = new mongoose.Schema({
   },
   accountType:{
     type:String,
-    required:true,
   },
   accountLimitation:{
     type:String,
-    required:true,
   },
   role:{
     type:String,
-    required:true
   },
   enabled:{
     type:Boolean,
@@ -105,10 +136,10 @@ const userSchema = new mongoose.Schema({
   type: Boolean,
   default: false,
 },
-  createdAt: {
+createdAt: {
     type: Date,
     default: Date.now
-  }
+}
 });
 
 const user = mongoose.model("user", userSchema);

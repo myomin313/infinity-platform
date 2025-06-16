@@ -13,7 +13,8 @@ const {
   invalidEmail,
   internalError,
   notFound
-} = require("../commonFunctions/response")
+} = require("../commonFunctions/response");
+const authenticateToken = require('../commonFunctions/authenticateToken');
 
 /**
  * @swagger
@@ -22,6 +23,8 @@ const {
  *     summary: Retrieve all services
  *     tags:
  *       - Services
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully retrieved services
@@ -65,12 +68,15 @@ const {
  *                   example: Internal server error
  */
 
-router.get("/", async (req, res) => {
+
+
+router.get("/", authenticateToken,async (req, res) => {
  try {
     const services = await serviceModel.find({});  
     const  response = success("success",services)
       return res.json(response);
   } catch (err) {
+    console.log("ddt");
    const response = error(err.message)
       return res.json(response);  
   }
@@ -83,6 +89,8 @@ router.get("/", async (req, res) => {
  *     summary: Download the service PDF file
  *     tags:
  *       - Services
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Service PDF file downloaded successfully
@@ -102,7 +110,9 @@ router.get("/", async (req, res) => {
  *                   type: string
  *                   example: File not found or unable to download.
  */
-router.get("/download", async (req, res) => {
+
+
+router.get("/download",authenticateToken, async (req, res) => {
   const filePath = path.join(__dirname, '../commonFunctions', 'service.pdf');
 
   res.download(filePath, (err) => {
