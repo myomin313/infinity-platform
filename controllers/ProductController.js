@@ -10,7 +10,8 @@ const {
   invalidEmail,
   internalError,
   notFound
-} = require("../commonFunctions/response")
+} = require("../commonFunctions/response");
+const authenticateToken = require('../commonFunctions/authenticateToken');
 
 
 /**
@@ -22,7 +23,10 @@ const {
  * /product:
  *   get:
  *     summary: Retrieve a list of products, optionally filtered by search term
- *     tags: [Products]
+ *     tags:
+ *       - Products
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: search
  *         in: query
@@ -63,9 +67,7 @@ const {
  *                         type: string
  *                         example: "High performance gaming laptop"
  */
-
-
-router.get("/", (req, res) => {
+router.get("/",authenticateToken,(req, res) => {
   const { search} = req.query;
   let filtered = [...products];
 

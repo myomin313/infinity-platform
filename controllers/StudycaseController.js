@@ -14,7 +14,8 @@ const {
   invalidEmail,
   internalError,
   notFound
-} = require("../commonFunctions/response")
+} = require("../commonFunctions/response");
+const authenticateToken = require('../commonFunctions/authenticateToken');
 
 const studyCaseModel = require('../models/studyCaseModel');
 
@@ -29,11 +30,13 @@ const upload = multer({ storage });
 
 /**
  * @swagger
- * /study-case/create:
+ * /case-study/create:
  *   post:
- *     summary: Create a new case study with file upload
+ *     summary: Create a new case study
  *     tags:
- *       - CaseStudies
+ *       - Case Study
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -46,90 +49,15 @@ const upload = multer({ storage });
  *             properties:
  *               title:
  *                 type: string
- *                 description: Title of the case study
+ *                 example: AI-Driven Customer Support
  *               tags:
  *                 type: string
- *                 description: Comma-separated list of tags
- *               file:
- *                 type: string
- *                 format: binary
- *                 description: The file to upload
- *     responses:
- *       200:
- *         description: Case study created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 message:
- *                   type: string
- *                   example: case study created successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                       example: "64b2f1234c56789d01234567"
- *                     title:
- *                       type: string
- *                       example: "My Case Study"
- *                     tags:
- *                       type: array
- *                       items:
- *                         type: string
- *                       example: ["tag1", "tag2"]
- *                     fileName:
- *                       type: string
- *                       example: "uploadfile12345.pdf"
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: error
- *                 message:
- *                   type: string
- *                   example: Internal server error
- */
-
-/**
- * @swagger
- * tags:
- *   - name: CaseStudies
- *     description: Case study management endpoints
- * 
- * /study-case/create:
- *   post:
- *     summary: Create a new case study with file upload
- *     tags: [CaseStudies]
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             required:
- *               - title
- *               - file
- *             properties:
- *               title:
- *                 type: string
- *                 example: "Market Analysis 2025"
- *               tags:
- *                 type: string
+ *                 example: "AI, Support, Automation"
  *                 description: Comma-separated tags
- *                 example: "market,analysis,2025"
  *               file:
  *                 type: string
  *                 format: binary
+ *                 description: PDF or document file upload
  *     responses:
  *       200:
  *         description: Case study created successfully
@@ -149,22 +77,14 @@ const upload = multer({ storage });
  *                   properties:
  *                     _id:
  *                       type: string
- *                       example: "60a7d6f5f1e7c45b8c5f4a1d"
  *                     title:
  *                       type: string
- *                       example: "Market Analysis 2025"
  *                     tags:
  *                       type: array
  *                       items:
  *                         type: string
- *                       example: ["market", "analysis", "2025"]
  *                     fileName:
  *                       type: string
- *                       example: "report-1621633023456.pdf"
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2024-06-10T12:00:00Z"
  *       500:
  *         description: Internal server error
  *         content:
@@ -177,85 +97,11 @@ const upload = multer({ storage });
  *                   example: error
  *                 message:
  *                   type: string
- *                   example: Internal server error
- * 
- * /study-case:
- *   get:
- *     summary: Get list of all case studies
- *     tags: [CaseStudies]
- *     responses:
- *       200:
- *         description: List of case studies
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 message:
- *                   type: string
- *                   example: case study list
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       _id:
- *                         type: string
- *                         example: "60a7d6f5f1e7c45b8c5f4a1d"
- *                       title:
- *                         type: string
- *                         example: "Market Analysis 2025"
- *                       tags:
- *                         type: array
- *                         items:
- *                           type: string
- *                         example: ["market", "analysis", "2025"]
- *                       fileName:
- *                         type: string
- *                         example: "report-1621633023456.pdf"
- *                       createdAt:
- *                         type: string
- *                         format: date-time
- *                         example: "2024-06-10T12:00:00Z"
- * 
- * /study-case/download:
- *   get:
- *     summary: Download a case study file
- *     tags: [CaseStudies]
- *     parameters:
- *       - in: query
- *         name: fileName
- *         schema:
- *           type: string
- *         required: true
- *         description: File name to download
- *         example: "report-1621633023456.pdf"
- *     responses:
- *       200:
- *         description: PDF file download
- *         content:
- *           application/pdf:
- *             schema:
- *               type: string
- *               format: binary
- *       500:
- *         description: File not found or unable to download
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: File not found or unable to download.
+ *                   example: Unexpected server error
  */
 
 
-
-router.post("/create", upload.single("file"), async (req, res) => {
+router.post("/create",authenticateToken,upload.single("file"), async (req, res) => {
   try {
     const { title, tags } = req.body;
     const fileName = `${req.file.filename}`;
@@ -282,6 +128,8 @@ router.post("/create", upload.single("file"), async (req, res) => {
  *     summary: Retrieve list of case studies sorted by creation date (newest first)
  *     tags:
  *       - CaseStudies
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully retrieved case study list
@@ -338,8 +186,18 @@ router.post("/create", upload.single("file"), async (req, res) => {
  *                   example: Internal server error
  */
 
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
 
-router.get("/", async (req, res) => {
+
+router.get("/",authenticateToken,async (req, res) => {
   try {
     const caseStudy = await studyCaseModel.find().sort({ createdAt: -1 });
     console.log("caseStudy",caseStudy);
@@ -359,13 +217,15 @@ router.get("/", async (req, res) => {
  *     summary: Download a file by fileName query parameter
  *     tags:
  *       - CaseStudies
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: fileName
  *         required: true
  *         schema:
  *           type: string
- *         description: Name of the file to download
+ *         description: Name of the file to download (e.g., case-study.pdf)
  *     responses:
  *       200:
  *         description: File downloaded successfully
@@ -400,7 +260,7 @@ router.get("/", async (req, res) => {
  */
 
 
-router.get("/download", async (req, res) => {
+router.get("/download",authenticateToken,async (req, res) => {
 
   const fileName = req.query.fileName;
   if (!fileName) {

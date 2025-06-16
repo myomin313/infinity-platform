@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { checkRequiredFields } = require("../commonFunctions/validate");
 const upload = require("../commonFunctions/upload"); // path to multer middleware
 const CaseStudy = require("../models/casestudyModel");
+const authenticateToken = require('../commonFunctions/authenticateToken');
 const {
   success,
   error,
@@ -17,13 +18,16 @@ const {
 
 
 // POST /api/case-studies
+
 /**
  * @swagger
  * /case-study/create:
  *   post:
- *     summary: Create a new case study
+ *     summary: Create a new case study (JWT Protected)
  *     tags:
  *       - Case Study
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -39,14 +43,19 @@ const {
  *             properties:
  *               title:
  *                 type: string
+ *                 example: AI-Driven Banking Automation
  *               description:
  *                 type: string
+ *                 example: A case study on deploying AI for transaction classification
  *               industry:
  *                 type: string
+ *                 example: Finance
  *               clientName:
  *                 type: string
+ *                 example: MyBank Corp
  *               country:
  *                 type: string
+ *                 example: Germany
  *               logo:
  *                 type: string
  *                 format: binary
@@ -63,14 +72,35 @@ const {
  *                   example: success
  *                 message:
  *                   type: string
- *                   example: case study created
+ *                   example: Case study created
  *                 data:
  *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "64b8fd2a9b9ad72dc8831ef2"
+ *                     title:
+ *                       type: string
+ *                     logoUrl:
+ *                       type: string
+ *                       example: /uploads/case-studies/logo123.png
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Server error occurred while creating case study.
  */
 
-router.post("/create", upload.single("logo"), async (req, res) => {
+
+router.post("/create",authenticateToken, upload.single("logo"), async (req, res) => {
   try {
     const { title, description, industry, clientName, country } = req.body;
 
@@ -101,6 +131,8 @@ router.post("/create", upload.single("logo"), async (req, res) => {
  *     summary: Get all case studies
  *     tags:
  *       - Case Study
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of case studies
@@ -109,9 +141,9 @@ router.post("/create", upload.single("logo"), async (req, res) => {
  *             schema:
  *               type: object
  *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
+ *                 status:
+ *                   type: string
+ *                   example: success
  *                 data:
  *                   type: array
  *                   items:
@@ -119,30 +151,49 @@ router.post("/create", upload.single("logo"), async (req, res) => {
  *                     properties:
  *                       _id:
  *                         type: string
+ *                         example: "665bc3d72fce123456789abc"
  *                       title:
  *                         type: string
+ *                         example: AI-Powered Fraud Detection
  *                       description:
  *                         type: string
+ *                         example: Improving fraud detection accuracy using ML.
  *                       industry:
  *                         type: string
+ *                         example: Banking
  *                       clientName:
  *                         type: string
+ *                         example: ABC Bank Ltd.
  *                       country:
  *                         type: string
+ *                         example: United Kingdom
  *                       logoUrl:
  *                         type: string
  *                         example: https://yourdomain.com/uploads/logo.png
  *                       createdAt:
  *                         type: string
  *                         format: date-time
+ *                         example: 2024-06-01T12:00:00Z
  *                       updatedAt:
  *                         type: string
  *                         format: date-time
+ *                         example: 2024-06-05T09:30:00Z
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Unable to fetch case studies.
  */
 
-router.get("/", async (req, res) => {
+router.get("/",authenticateToken, async (req, res) => {
   try {
     const cases = await CaseStudy.find().sort({ createdAt: -1 });
     const updatedCases = cases.map(cs => {
@@ -165,28 +216,30 @@ router.get("/", async (req, res) => {
  *     summary: Search case studies by title or industry
  *     tags:
  *       - Case Study
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: q
  *         schema:
  *           type: string
- *         description: Search keyword for case study title
+ *         description: Search keyword for case study title or description (partial match, case-insensitive)
  *       - in: query
  *         name: industry
  *         schema:
  *           type: string
- *         description: Industry to filter case studies
+ *         description: Filter results by industry (exact match)
  *     responses:
  *       200:
- *         description: Filtered case studies
+ *         description: Filtered list of case studies
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
+ *                 status:
+ *                   type: string
+ *                   example: success
  *                 data:
  *                   type: array
  *                   items:
@@ -194,31 +247,49 @@ router.get("/", async (req, res) => {
  *                     properties:
  *                       _id:
  *                         type: string
+ *                         example: "665bc3d72fce123456789abc"
  *                       title:
  *                         type: string
+ *                         example: Cloud Migration for FinTech
  *                       description:
  *                         type: string
+ *                         example: Migrated infrastructure to AWS with zero downtime.
  *                       industry:
  *                         type: string
+ *                         example: FinTech
  *                       clientName:
  *                         type: string
+ *                         example: NeoBank Corp.
  *                       country:
  *                         type: string
+ *                         example: Singapore
  *                       logoUrl:
  *                         type: string
  *                         example: https://yourdomain.com/uploads/logo.png
  *                       createdAt:
  *                         type: string
  *                         format: date-time
+ *                         example: 2024-06-01T12:00:00Z
  *                       updatedAt:
  *                         type: string
  *                         format: date-time
+ *                         example: 2024-06-05T09:30:00Z
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Failed to search case studies
  */
 
-
-router.get("/search", async (req, res) => {
+router.get("/search",authenticateToken, async (req, res) => {
   try {
     const { q, industry } = req.query;
     const filter = {

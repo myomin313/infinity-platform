@@ -39,6 +39,16 @@ const swaggerOptions = {
         url: process.env.SWAGGER_URL,
       },
     ],
+     components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
   },
   apis: ['./controllers/*.js'],
 

@@ -14,6 +14,7 @@ const {
   internalError,
   notFound
 } = require("../commonFunctions/response");
+const authenticateToken = require('../commonFunctions/authenticateToken');
 
 const multer = require('multer');
 const upload = multer();
@@ -43,11 +44,17 @@ function cosineSimilarity(a, b) {
 
 /**
  * @swagger
+ * tags:
+ *   - name: search
+ *     description: Search documents using text query and embedding similarity
+ * 
  * /search:
  *   post:
  *     summary: Search documents using text query and embedding similarity
  *     tags:
  *       - search
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -117,8 +124,19 @@ function cosineSimilarity(a, b) {
  *                   example: Detailed error message
  */
 
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
 
-router.post("/", upload.none(), async (req, res) => {
+
+
+router.post("/",authenticateToken,upload.none(), async (req, res) => {
   const { query } = req.body;
 
   let isRequired = checkRequiredFields(["query"], req.body);

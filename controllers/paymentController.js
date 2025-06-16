@@ -15,6 +15,7 @@ const {
   internalError,
   notFound
 } = require("../commonFunctions/response");
+const authenticateToken = require('../commonFunctions/authenticateToken');
 
 const multer = require('multer');
 const upload = multer();
@@ -22,11 +23,13 @@ const upload = multer();
 
 /**
  * @swagger
- * /payment/create-payment-intent:
+ * /create-payment-intent:
  *   post:
- *     summary: Create a Stripe payment intent and save order details
+ *     summary: Create a Stripe payment intent
  *     tags:
  *       - Payment
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -35,28 +38,23 @@ const upload = multer();
  *             type: object
  *             required:
  *               - serviceId
+ *               - amount
+ *               - userId
  *               - quantity
- *               - customerEmail
- *               - customerName
- *               - address
- *               - city
- *               - country
  *             properties:
  *               serviceId:
  *                 type: string
+ *                 example: "60c72b2f9b1e8a001c8f1234"
+ *               amount:
+ *                 type: integer
+ *                 example: 1000
+ *                 description: Amount in smallest currency unit (e.g., cents)
+ *               userId:
+ *                 type: string
+ *                 example: "user123"
  *               quantity:
  *                 type: integer
- *               customerEmail:
- *                 type: string
- *                 format: email
- *               customerName:
- *                 type: string
- *               address:
- *                 type: string
- *               city:
- *                 type: string
- *               country:
- *                 type: string
+ *                 example: 1
  *     responses:
  *       200:
  *         description: Payment intent created successfully
@@ -67,77 +65,91 @@ const upload = multer();
  *               properties:
  *                 clientSecret:
  *                   type: string
- *                   description: Stripe client secret for frontend usage
+ *                   example: pi_1GqIC8L4pX3eZc01JfZK29sd_secret_XYZ
  *       400:
- *         description: Required fields missing or invalid input
+ *         description: Missing required fields or invalid input
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
  *                 message:
  *                   type: string
+ *                   example: Missing required fields
  *       500:
- *         description: Internal server error during payment processing
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Server encountered an error while processing the request
+ */
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 
 
-router.post("/create-payment-intent", upload.none(), async (req, res) => {
+router.post("/create-payment-intent",authenticateToken, upload.none(), async (req, res) => {
   try {
-    console.log("job module", req.body);
+    console.log("job module", req.body.userId);
 
-   // let isRequired = checkRequiredFields(["serviceId","quantity", "customerEmail", "customerName","address","city","country"], req.body);
+    let isRequired = checkRequiredFields(["serviceId","amount", "userId","quantity"], req.body);
 
-    // if (isRequired) {
-    //   console.log("send required fields response");
-    //   let response = requiredParams(isRequired);
-    //   return res.json(response);
-    // } else {
-    
-      // let serviceId = req.body.serviceId;
-      // let quantity = req.body.quantity;
-      // let customerEmail = req.body.customerEmail;
-      // let customerName = req.body.customerName;
-      // //let token = req.body.token;
-      // let address = req.body.address;
-      // let city = req.body.city;
-      // let country = req.body.country;
-     
-
-      // 3. Payment Processing
-    //  const amount = await calculateTotalAmount(serviceId, quantity); // Fetch from DB
-      const amount = 100;
-      console.log("amount",amount);
-     
-
-       
+    if (isRequired) {
+      console.log("send required fields response");
+      let response = requiredParams(isRequired);
+      return res.json(response);
+    } else {
+        const serviceId = req.body.serviceId; 
+        const amount = req.body.amount; 
+        const userId = req.body.userId;
+        const quantity = req.body.quantity;
+        const currency  = "eur";
           const paymentIntent = await stripe.paymentIntents.create({
             amount,
-            currency: 'usd',
+            currency: 'eur',
             payment_method_types: ['card'],
             metadata: {
-              customerEmail: "myomin313@gmail.com",  // Add the user ID here
+              userId: userId, // Add the user ID here
             }
           });
-      // const order = new Order({
-      //   serviceId,
-      //   quantity,
-      //   customerName,
-      //   customerEmail,
-      //   address,
-      //   city,
-      //   country,
-      //   amount,
-      //   chargeId: paymentIntent.id,
-      //   status: "Processing",
-      //   placedAt: new Date()
-      // });
-      // await order.save();
+           const priceInCents =amount;
+           const price = (priceInCents / 100).toFixed(2).replace(/\.00$/, '');
+ 
+           console.log("price",price);
+          const order = new Order({
+             serviceId,
+             userId,
+             amount:price,
+             chargeId: paymentIntent.id,
+             status: "Processing",
+             currency,
+             quantity,
+             placedAt: new Date()
+          });
+        await order.save();
+
       console.log("paymentIntent.client_secret",paymentIntent.client_secret);
 
     return res.send({ clientSecret: paymentIntent.client_secret });
 
-    // }
+     }
   } catch (err) {
     console.log({ err });
     let response = internalError();
@@ -147,7 +159,7 @@ router.post("/create-payment-intent", upload.none(), async (req, res) => {
 
 
 
-router.post("/webhook", async (req, res) => {
+router.post("/webhook",async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
 
@@ -172,13 +184,6 @@ router.post("/webhook", async (req, res) => {
 
   res.status(200).send('Received');
 });
-
-
-async function calculateTotalAmount(serviceId, quantity) {
-  const service = await serviceModel.findById(serviceId);
-
-  return Math.round(service.price * quantity * 100); // Stripe uses cents
-}
 
 module.exports = router;
 
