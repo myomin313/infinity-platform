@@ -149,13 +149,13 @@ router.post("/send", authenticateToken,upload.none(), async (req, res) => {
     let isRequired = checkRequiredFields(["name", "email","contactNumber","address","city","country","captcha"], req.body);
 
 
-    const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.CAPTCHA_SECRET_KEY}&response=${req.body.captcha}`;
+    // const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.CAPTCHA_SECRET_KEY}&response=${req.body.captcha}`;
 
-    const { data } = await axios.post(verifyURL);
+    // const { data } = await axios.post(verifyURL);
 
-    if (!data.success) {
-      return res.status(400).json({ message: "captcha verification failed" });
-    }
+    // if (!data.success) {
+    //   return res.status(400).json({ message: "captcha verification failed" });
+    // }
     
     if (isRequired) {
       console.log("send required fields response");

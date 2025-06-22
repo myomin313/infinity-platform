@@ -123,19 +123,23 @@ function isValidEmail(email) {
 
 
 router.post("/submit",authenticateToken, upload.none(), async (req, res) => {
-  
+    console.log("hello",req.body.name);
   try {
-    let isRequired = checkRequiredFields(["name", "email","contactNumber","productName"], req.body);
+    // let isRequired = checkRequiredFields(["name", "email","contactNumber","productName"], req.body);
 
-    if (isRequired) {
-      console.log("send required fields response");
-      let response = requiredParams(isRequired);
-      return res.json(response);
-    } else {
+    // if (isRequired) {
+    //   console.log("send required fields response");
+    //   let response = requiredParams(isRequired);
+    //   return res.json(response);
+    // } else {
       let name = req.body.name;
       let email = req.body.email;
-      let contactNumber = req.body.contactNumber;
-      let productName = req.body.productName;
+      let company = req.body.company;
+      // let countryCode = req.body.countryCode;
+      // let phone = +req.body.countryCode + req.body.phone;
+      let phone = `${req.body.phone}${req.body.phoneNumber}`;
+      let product = req.body.product;
+      console.log("phone",req.body.phone);
       const isValid = isValidEmail(email);
 
       if (isValid) {
@@ -143,8 +147,9 @@ router.post("/submit",authenticateToken, upload.none(), async (req, res) => {
         let newContact = new contactUsModel({
                   name: name,
                   email: email,
-                  contactNumber:contactNumber,
-                  productName:productName,
+                  company:company,
+                  phone:phone,
+                  product:product
                 });
 
         let result = await newContact.save();
@@ -152,8 +157,8 @@ router.post("/submit",authenticateToken, upload.none(), async (req, res) => {
 New Contact Submission:
 Name: ${name}
 Email: ${email}
-Contact Number: ${contactNumber}
-Request Product Type: ${productName}}
+Contact Number: ${phone}
+Request Product Type: ${product}
 `;
 
     // Publish to SNS
@@ -173,11 +178,7 @@ Request Product Type: ${productName}}
         let response = success("contact form submit success",newContact);
         return res.json(response);
          
-      } else {
-        console.log("invalid part called");
-        let response = error(invalidEmail());
-        return res.json(response);
-      }
+      
     }
   } catch (err) {
     console.log({ err });

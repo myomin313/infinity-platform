@@ -13,11 +13,16 @@ const contactSchema = new mongoose.Schema({
     lowercase: true,
     match: /^\S+@\S+\.\S+$/
   },
-  contactNumber:{
+  company: {
+    type: String,
+    required:true,
+    default: ""
+  },
+  phone:{
     type: String,
     default:"",
   },
-  productName:{
+  product:{
     type: String,
   },
   createdAt: {

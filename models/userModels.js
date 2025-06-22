@@ -1,39 +1,35 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  name: {
+  firstName: {
     type: String,
-    trim: true
   },
-  contactNumber:{
-    type:String,
-    required:true,
+  familyName: {
+    type: String,
   },
-  companyRegistrationNumber:{
-     type:String,
-    required:true, 
+  companyEmail: {
+    type: String,
+  },
+   password: {
+    type: String,
+  },
+  companyRegistrationId:{
+     type:String, 
   },
   companySize:{
     type:String,
   },
-  level:{
-  type:String,
-  enum: ["founder", "cto", "developer", "product","other","Procurement Manager","User"],  
-  },
   address1:{
     type:String,
-    required:true,
   },
   address2:{
     type:String,
   },
   city:{
     type:String,
-    required:true,
   },
   country:{
     type:String, 
-    required:true,
   },
   verificationCode: String,
   verificationCodeExpires: Date,
@@ -43,11 +39,8 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+    require:true,
     unique: true
-  },
-  password: {
-    type: String,
   },
   startDate:{
     type:Date,
