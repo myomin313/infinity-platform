@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const { checkRequiredFields } = require("../commonFunctions/validate");
 const userModel = require('../models/userModels');
+const feedbackModel = require('../models/feedbackModel');
 const {
   success,
   error,
@@ -102,7 +103,7 @@ let info = await transporter.sendMail({
 
 };
 
-const  sendVeificationCode = async (email,code) => {
+const  sendVerificationCode = async (email,code) => {
 
 
    //console.log("user",process.env.sendMail);
@@ -449,8 +450,8 @@ router.post("/signup",authenticateToken,async (req, res) => {
   try {
     console.log("user module signup", req.body);
 
-    let isRequired = checkRequiredFields(["name","contactNumber", "email", "companyRegistrationNumber",
-      "companySize","level","address1","city","country","desiredStartDate","captcha"], req.body);
+    let isRequired = checkRequiredFields(["firstName","familyName", "email","password","repeatPassword","companyRegistrationId",
+      "companySize","address1","city","country","desiredStartDate","captcha"], req.body);
     
     if (isRequired) {
       console.log("send required fields response",isRequired);
@@ -458,12 +459,13 @@ router.post("/signup",authenticateToken,async (req, res) => {
       return res.json(response);
     } else {
 
-      let name = req.body.name;
-      let email = req.body.email;
-      let contactNumber = req.body.contactNumber;
-      let companyRegistrationNumber = req.body.companyRegistrationNumber;
+      let firstName = req.body.firstName;
+      let familyName = req.body.familyName;
+      let companyEmail = req.body.email;
+      let password = req.body.password;
+      let repeatPassword = req.body.repeatPassword;
+      let companyRegistrationId = req.body.companyRegistrationId;
       let companySize = req.body.companySize;
-      let level = req.body.level;
       let address1 = req.body.address1;
       let address2 = req.body.address2;
       let city = req.body.city;
@@ -471,101 +473,69 @@ router.post("/signup",authenticateToken,async (req, res) => {
       let desiredStartDate = req.body.desiredStartDate;
       let captcha = req.body.captcha;
       let realCaptcha = req.body.realCaptcha;
-     
-      const isValid = isValidEmail(email);
+      let email = req.body.verificationEmail;
+ 
 
-
-      
-
+       const isValid =isValidEmail(companyEmail);
         // const response = error("Email is already exit")
         //   return res.json(response);
-
-
-        
-          if (captcha !== realCaptcha) {
+      if (captcha !== realCaptcha) {
             console.log("Captcha",captcha);
             console.log("lastCaptchaText",realCaptcha);
             console.log("Captcha error");
            // return res.status(400).json({ error: 'Invalid CAPTCHA' });
-              const response = error("captcha_error","Captcha is not correct")
-              return res.json(response);
-          }
-
+            const response = error("Captcha is not correct")
+            return res.json(response);
+      }
+       if (password !== repeatPassword) {
+            const response = error("Password is not same.")
+            return res.json(response);
+      }
       if (isValid) {
-        let isEmailExist = await userModel
-          .findOne({ email: email })
-          .exec();
-        console.log({ isEmailExist });
-        if (isEmailExist) {
-          console.log("conflict email");
-         const response = error("email_exit","Email is already exit")
-        //  return res.status(400).json({ error: 'Email is already exit' });
-          return res.json(response);
-        } else {
              console.log("error else");
 
-            const generatePassword = (length = 12) => {
-                return crypto.randomBytes(length).toString('base64').slice(0, length);
-            };
-            const password = generatePassword();
-             // console.log("generate",generatePassword()); // e.g., A2k9sPq!uF7X
-            // bcrypt.hash(password, saltRounds, async function (err, hash) {
-            //   console.log("password validation status", { err, hash });
+             const pass = await bcrypt.hash(password, saltRounds);
 
-            //   if (err) {
-            //     throw new Error("internal server error");
-            //   } else {
-
-             
-
-            const verificationCode = generateVerificationCode();
-            const verificationCodeExpires = new Date(Date.now() + 30 * 60 * 1000); 
-
-            // const jwtSignupToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '10m' });
-               // userDB[email] = { name, email, verificationCode }; // Store code temporarily
-
-                let newUser = new userModel({
-                   name: name,
-                   email: email,
-                   password:password,
-                   contactNumber: contactNumber,
-                   companyRegistrationNumber:companyRegistrationNumber,
-                   companySize:companySize,
-                   level:level,
-                   address1:address1,
-                   address2:address2,
-                   city:city,
-                   country:country,
-                   desiredStartDate:desiredStartDate,
-                   verificationCode,
-                   verificationCodeExpires
-                 });
-
-                let result = await newUser.save();
+                const result = await userModel.findOneAndUpdate(
+  { email }, // Find by email
+  {
+    $set: {
+      firstName,
+      familyName,
+      companyEmail,
+      password:pass,
+      companyRegistrationId,
+      companySize,
+      address1,
+      address2,
+      city,
+      country,
+      desiredStartDate
+    }
+  },
+  {
+    new: true,           // Return the updated document
+    upsert: true,        // Create the document if not found
+    setDefaultsOnInsert: true,
+  }
+);
 
                   
-               await sendVeificationCode(email, verificationCode);
+              // await sendVerificationCode(email, verificationCode);
 
                 console.log({ result });
                 let { _id } = result;
                 console.log("created response", {
                   _id,
-                  name,
                   email,
-                  verificationCode
                 });
                 let response = success("new user created", {
                   _id,
-                  name,
                   email,
-                  verificationCode,
                 });
               
                 return res.json(response);
-             // }
-            // });
-       
-        }
+        
       } else {
         console.log("invalid part called");
         let response = invalidEmail();
@@ -578,6 +548,81 @@ router.post("/signup",authenticateToken,async (req, res) => {
     console.log({ err });
     //let response = internalError();
     const response =  error("error")
+    return res.json(response);
+  }
+});
+
+
+
+router.post("/email",authenticateToken,async (req, res) => {
+     console.log("hello",lastCaptchaText);
+  try {
+    console.log("user module signup", req.body);
+    let isRequired = checkRequiredFields(["email","confirmEmail","captcha"], req.body);
+    if (isRequired) {
+      console.log("send required fields response",isRequired);
+      let response = requiredParams(isRequired);
+      return res.json(response);
+    } else {
+      console.log("hello");
+      let email = req.body.email;
+      let confirmEmail = req.body.confirmEmail;
+      let captcha = req.body.captcha;
+      let realCaptcha = req.body.realCaptcha;
+      const isValid = isValidEmail(email);
+      
+      if(isValid) {
+
+      if (email !== confirmEmail) {
+        const response = error("Emails do not match");
+        return res.json(response)
+      }
+      if(captcha !== realCaptcha){
+        const response = error("Captcha  do not match");
+        return res.json(response)
+      }
+
+         let isEmailExist = await userModel
+          .findOne({ email: email })
+          .exec();
+        console.log({ isEmailExist });
+        if (isEmailExist) {
+          console.log("conflict email");
+         const response = error("Email is already exit")
+          return res.json(response);
+        } else {
+            const verificationCode = generateVerificationCode();
+            const verificationCodeExpires = new Date(Date.now() + 30 * 60 * 1000); 
+                let newUser = new userModel({
+                   email: email,
+                   verificationCode,
+                   verificationCodeExpires
+                 });
+                let result = await newUser.save();
+               await sendVerificationCode(email, verificationCode);
+                console.log({ result });
+                let { _id } = result;
+                console.log("created response", {
+                  _id,
+                  email,
+                  verificationCode
+                });
+                let response = success("new user created", {
+                  _id,
+                  email,
+                  verificationCode,
+                });
+                return res.json(response);
+        }
+
+      }else{
+         const error = error('Email format is not correct');
+         return res.json(error);
+      }
+    }
+  } catch (err) {
+    console.log({ err });
+    const response =  error(err.message)
     return res.json(response);
   }
 });
@@ -605,6 +650,49 @@ router.post("/signup",authenticateToken,async (req, res) => {
 //     return res.status(401).json({ message: 'Invalid or expired token' });
 //   }
 // });
+
+
+
+// Submit feedback
+router.post('/feedback', async (req, res) => {
+  try {
+  
+    const newFeedback = new feedbackModel({
+      selectedDescribeItems: req.body.selectedDescribeItems,
+      score: req.body.score,
+      experience: req.body.experience,
+      ease: req.body.ease,
+      challenge: req.body.challenge,
+      challengesDetails: req.body.challengesDetails,
+      location: req.body.location,
+      intuitive: req.body.intuitive,
+      like: req.body.like,
+      recommend: req.body.recommend,
+      toImprove: req.body.toImprove,
+      missing: req.body.missing,
+      participate: req.body.participate,
+      userId:req.body.userId,
+      submittedAt: new Date()
+    });
+
+   
+    await newFeedback.save();
+
+
+    const response  = success("Feedback submitted successfully",{
+      newFeedback
+    });
+    return res.json(response); 
+
+  } catch (err) {
+
+    const response = error(err.message);
+    return res.json(response);
+   
+  }
+});
+
+
 
 router.post('/verify-email',authenticateToken,async (req, res) => {
     console.log("hello verify");
@@ -981,6 +1069,13 @@ router.post("/login",upload.none(), async (req, res) => {
         let response = error("incorrect password, try again");
         return res.json(response);
     }
+
+
+    if (!user.isVerified) {
+      let response = error("Please verify your email first");
+      return res.json(response);
+    }
+    
     console.log("user",user);
     createSendToken(user, res);
  
