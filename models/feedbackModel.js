@@ -9,43 +9,63 @@ const feedbackSchema = new mongoose.Schema({
   selectedDescribeItems: {
     type: [String],
     enum: ['individual', 'company', 'other'],
+    default:null
   },
   score: {
     type: Number,
     min: 1,
     max: 5,
+    default:null
   },
-  location: String,
+  location: {
+    type: String,
+    default:""
+  },
   experience: {
     type: Number,
     min: 1,
-    max: 5
+    max: 5,
+    default:null
   },
   ease: {
     type: Number,
     min: 1,
-    max: 5
+    max: 5,
+    default:null
   },
   challenge: {
     type: String,
-    enum: ['yes', 'no']
+    enum: ['yes', 'no'],
+    default:null
   },
   challengesDetails: String,
   intuitive: {
     type: String,
-    enum: ['yes', 'no']
+    enum: ['yes', 'no'],
+    default:null
   },
-  like: String,
+  location: {
+    type: String,
+    default:""
+  },
   recommend: {
     type: Number,
     min: 1,
-    max: 5
+    max: 5,
+    default:null
   },
-  toImprove: String,
-  missing: String,
+  toImprove: {
+    type: String,
+    default:""
+  },
+  missing: {
+    type: String,
+    default:""
+  },
   participate: {
     type: String,
-    enum: ['yes', 'no']
+    enum: ['yes', 'no'],
+    default:null
   },
   submittedAt: {
     type: Date,

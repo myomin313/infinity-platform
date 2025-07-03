@@ -4,6 +4,12 @@ const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
   },
+  companyName: {
+    type: String,
+  },
+  zipCode: {
+    type: String,
+  },
   familyName: {
     type: String,
   },
@@ -12,6 +18,9 @@ const userSchema = new mongoose.Schema({
   },
    password: {
     type: String,
+  },
+  accountId:{
+    type:String,
   },
   companyRegistrationId:{
      type:String, 

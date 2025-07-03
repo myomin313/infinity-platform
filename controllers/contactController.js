@@ -146,9 +146,9 @@ router.post("/send", authenticateToken,upload.none(), async (req, res) => {
   try {
  
 
-    let isRequired = checkRequiredFields(["name", "email","contactNumber","address","city","country","captcha"], req.body);
+    let isRequired = checkRequiredFields(["name", "email","CompanyRegistrationId","contactNumber","phone","address1","city","country","captcha","selectedSaas","desiredStartDate"], req.body);
 
-
+     console.log("hello");
     // const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.CAPTCHA_SECRET_KEY}&response=${req.body.captcha}`;
 
     // const { data } = await axios.post(verifyURL);
@@ -165,13 +165,14 @@ router.post("/send", authenticateToken,upload.none(), async (req, res) => {
       let name = req.body.name;
       let userEmail = req.body.email;
       let contactNumber = req.body.contactNumber;
-      let address = req.body.address;
-      let addressTwo = req.body.addressTwo;
+      let address = req.body.address1;
+      let addressTwo = req.body.address2;
       let city = req.body.city;
       let country = req.body.country;
-      let saas = req.body.saas;
-      let hosted = req.body.hosted;
-      let desiredDate = req.body.desiredDate;
+      let saas = req.body.selectedSaas;
+      let hosted = req.body.selectedSelfHosted;
+      let desiredDate = req.body.desiredStartDate;
+      let zipcode = req.body.zipcode;
       const isValid = isValidEmail(userEmail);
 
       if (isValid) {
@@ -186,7 +187,8 @@ router.post("/send", authenticateToken,upload.none(), async (req, res) => {
                   country:country,
                   saas:saas,
                   hosted:hosted,
-                  desiredDate:desiredDate
+                  desiredDate:desiredDate,
+                  zipcode:zipcode,
                 });
 
         let result = await newContact.save();
@@ -203,7 +205,8 @@ SaaS: ${saas}
 Hosted: ${hosted}
 Desired Date: ${desiredDate}
 `;
-
+ 
+  console.log("process env arn", process.env.arn);
     // Publish to SNS
   const command = new PublishCommand({
       Message: snsMessage,
@@ -211,10 +214,13 @@ Desired Date: ${desiredDate}
       TopicArn: process.env.arn // Make sure this is set in your .env
   });
 
+
+
     try{
        await snsClient.send(command);
        console.log("success in mail send")
     } catch (err) {
+         console.log(err.message);
     const response = error(err);
     return res.json(response);
   }

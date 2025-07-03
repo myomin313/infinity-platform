@@ -77,21 +77,21 @@ const sendResetEmail = async (to, link) => {
   //console.log("user",process.env.sendMail);
     try {
 let info = await transporter.sendMail({
-  from: `"OST Platform" <${process.env.EMAIL_SENDER}>`,
+  from: `"Ost Infinity" <${process.env.EMAIL_SENDER}>`,
   to: `${to}`,
-  subject: "Welcome to OST Platform - Verify Your Email",
+  subject: "Welcome to Ost Infinity - Email Verification",
   text: `Please use this to verify your email.`,
   html: `
     <div style="max-width:600px;margin:0 auto;font-family:Arial,sans-serif;border:1px solid #eee;border-radius:6px;">
       <div style="background:#0078ff;color:#fff;padding:20px;text-align:center;border-top-left-radius:6px;border-top-right-radius:6px;">
-        <h2 style="margin:0;"> OST Platform</h2>
+        <h2 style="margin:0;">Welcome to Ost Infinity</h2>
       </div>
       <div style="padding:30px;">
-        <p> OST Platform!</p>
+        <p> Dear Ost Infinity!</p>
         <p>We're thrilled to have you on board. To get started and ensure your account is secure, please use click the link Below.</p>
         <p style="font-size:16px;"> <span style="color:#0078ff;font-weight:bold;font-size:20px;"><a href="${link}">${link}</a></span></p>
         <p>Welcome aboard, and happy exploring!</p>
-        <p style="margin-top:40px;">Best regards,<br/>Team OST</p>
+        <p style="margin-top:40px;">Best regards,<br/>Team Ost Infinity</p>
       </div>
     </div>
   `,
@@ -104,26 +104,78 @@ let info = await transporter.sendMail({
 };
 
 const  sendVerificationCode = async (email,code) => {
-
-
    //console.log("user",process.env.sendMail);
     try {
 let info = await transporter.sendMail({
-  from: `"OST Platform" <${process.env.EMAIL_SENDER}>`,
+  from: `"Ost Infinity" <${process.env.EMAIL_SENDER}>`,
   to: `${email}`,
-  subject: "Welcome to OST Platform - Verify Your Email",
+  subject: "Welcome to Ost Infinity - Email Verification",
   text: `Please use this to verify your email.`,
   html: `
     <div style="max-width:600px;margin:0 auto;font-family:Arial,sans-serif;border:1px solid #eee;border-radius:6px;">
       <div style="background:#0078ff;color:#fff;padding:20px;text-align:center;border-top-left-radius:6px;border-top-right-radius:6px;">
-        <h2 style="margin:0;"> OST Platform</h2>
+        <h2 style="margin:0;">Welcome To Ost Infinity</h2>
       </div>
       <div style="padding:30px;">
-        <p> OST Platform!</p>
-        <p>Before you sign in, we need to verify your identity. Enter the following code on the sign-in page.</p>
+        <p>Dear Customer !</p>
+        <p>Before we process your request, we need to verify your identity.Please enter the following code on the Email Verification page.</p>
         <p style="font-size:16px;"> <span style="color:#0078ff;font-weight:bold;font-size:20px;">${code}</span></p>
-      
-        <p style="margin-top:40px;">Best regards,<br/>Team OST</p>
+        <p>Please follow the instruction by Ost Infinity</p>
+        <p style="margin-top:40px;">Best regards,<br/>Team Ost Infinity</p>
+      </div>
+    </div>
+  `,
+});
+} catch (err) {
+     console.error("Nodemailer:", err);
+   
+   }
+}
+
+
+const  successCreateAccount = async (email,firstName,companyEmail,accountId) => {
+   //console.log("user",process.env.sendMail);
+    try {
+let info = await transporter.sendMail({
+  from: `"Ost Infinity" <${process.env.EMAIL_SENDER}>`,
+  to: `${email}`,
+  subject: "Welcome to Ost Infinity - Email Verification",
+  text: `Please use this to verify your email.`,
+  html: `
+    <div style="max-width:600px;margin:0 auto;font-family:Arial,sans-serif;border:1px solid #eee;border-radius:6px;">
+      <div style="background:#0078ff;color:#fff;padding:20px;text-align:center;border-top-left-radius:6px;border-top-right-radius:6px;">
+        <h2 style="margin:0;">Welcome To Ost Infinity</h2>
+      </div>
+      <div style="padding:30px;">
+        <p>Hello ${firstName} !</p>
+        <p>Welcome To Ost Infinity !</p>
+        <p>Thank you for choosing us Ost Infinity! We feel so gratful and privileged to have you as a part of our family.
+        We'are hugely exicted to serve you the best of XDR - Extended Detection and Response and NPMO -
+        Network Performance Monitoring and Observability offering a Real-Time visibility data virtualisation product features.</p>
+        <p> Your account has been approved:</p>
+        <p><Strong className="font-bold">Account Number :</Strong> ${accountId}</p>
+        <p><Strong className="font-bold">Login:</Strong>${companyEmail} / ${accountId}</p>
+        <p><Strong>Login Portal:</Strong> <a href="https://ostinfinity.net/auth/login">https://ostinfinity.net/auth/login</a></p>
+
+        <p>Please keep details very safe vault and do not share</p>
+
+        <p>With us,you stand to login:</p>
+         <ul>
+           <li> Benefit-1</li>
+           <li> Benefit-2</li>
+         </ul>
+
+         <p>Here are some helpful resources:</p>
+         <ul>
+           <li> Link 1</li>
+           <li> Link 2</li>
+           <li> Link 3</li>
+         </ul>
+
+         <p>Your satisfaction is our priority</p>
+         <p>Let us know if you need any help</p>
+         <p>Thanks for choosing us.</p>
+         <p>We Warmly Welcome You !</p>
       </div>
     </div>
   `,
@@ -445,6 +497,37 @@ function generateVerificationCode(length = 6) {
  *         description: List of users returned successfully
  */
 
+function generateCompanyCode(totalCompanies, companyName) {
+    // Convert total to string
+    const totalStr = totalCompanies.toString();
+    const totalDigits = totalStr.length;
+    
+    // Generate random digits to complete 7 digits
+    let numberPart;
+    if (totalDigits >= 7) {
+        numberPart = totalStr.slice(0, 7);
+    } else {
+        const randomDigitsNeeded = 7 - totalDigits;
+        const randomPart = Array.from({length: randomDigitsNeeded}, () => 
+            Math.floor(Math.random() * 10)
+        ).join('');
+        numberPart = totalStr + randomPart;
+    }
+
+    // Process company abbreviation
+    companyName = companyName.toLowerCase().trim();
+    let abbrev;
+
+        const cleanName = companyName.replace(/\s+/g, ''); // Remove all spaces
+        if (cleanName.length >= 2) {
+            abbrev = (cleanName[0] + cleanName.slice(-1)).toUpperCase();
+        } else {
+            // For single-character names, just repeat the character
+            abbrev = (cleanName[0] || 'X').toUpperCase().repeat(2);
+        }
+    return `${numberPart}_${abbrev}`;
+}
+
 router.post("/signup",authenticateToken,async (req, res) => {
      console.log("hello",lastCaptchaText);
   try {
@@ -474,6 +557,8 @@ router.post("/signup",authenticateToken,async (req, res) => {
       let captcha = req.body.captcha;
       let realCaptcha = req.body.realCaptcha;
       let email = req.body.verificationEmail;
+      let companyName= req.body.companyName;
+      let zipCode = req.body.zipCode;
  
 
        const isValid =isValidEmail(companyEmail);
@@ -496,10 +581,19 @@ router.post("/signup",authenticateToken,async (req, res) => {
 
              const pass = await bcrypt.hash(password, saltRounds);
 
+
+              const companyCount = await userModel.countDocuments();
+              
+
+            const accountId = generateCompanyCode(companyCount,companyName);
+
+             console.log("accountId",accountId);
                 const result = await userModel.findOneAndUpdate(
   { email }, // Find by email
   {
     $set: {
+      zipCode,
+      companyName,
       firstName,
       familyName,
       companyEmail,
@@ -510,7 +604,8 @@ router.post("/signup",authenticateToken,async (req, res) => {
       address2,
       city,
       country,
-      desiredStartDate
+      desiredStartDate,
+      accountId
     }
   },
   {
@@ -521,7 +616,7 @@ router.post("/signup",authenticateToken,async (req, res) => {
 );
 
                   
-              // await sendVerificationCode(email, verificationCode);
+               await successCreateAccount(email,firstName,companyEmail,accountId);
 
                 console.log({ result });
                 let { _id } = result;
@@ -658,23 +753,23 @@ router.post('/feedback', async (req, res) => {
   try {
   
     const newFeedback = new feedbackModel({
-      selectedDescribeItems: req.body.selectedDescribeItems,
-      score: req.body.score,
-      experience: req.body.experience,
-      ease: req.body.ease,
-      challenge: req.body.challenge,
-      challengesDetails: req.body.challengesDetails,
-      location: req.body.location,
-      intuitive: req.body.intuitive,
-      like: req.body.like,
-      recommend: req.body.recommend,
-      toImprove: req.body.toImprove,
-      missing: req.body.missing,
-      participate: req.body.participate,
-      userId:req.body.userId,
-      submittedAt: new Date()
+      selectedDescribeItems: req.body.selectedDescribeItems || [],
+  score: req.body.score || null,
+  experience: req.body.experience || null,
+  ease: req.body.ease || null,
+  challenge: req.body.challenge || null,
+  challengesDetails: req.body.challengesDetails || "",
+  location: req.body.location || "",
+  intuitive: req.body.intuitive || null,
+  like: req.body.like || "",
+  recommend: req.body.recommend || null,
+  toImprove: req.body.toImprove || "",
+  missing: req.body.missing || "",
+  participate: req.body.participate || null,
+  userId: req.body.userId || null,
+  submittedAt: new Date()
     });
-
+ 
    
     await newFeedback.save();
 
@@ -1045,7 +1140,7 @@ router.post('/suspend-multiple',authenticateToken,async (req, res) => {
 router.post("/login",upload.none(), async (req, res) => {
      //try {
     const { identifier, password } = req.body;
-    console.log("req.body.",req.body.password);
+   
 
     if (!identifier || !password) {
       const response = error("Please provide identifier and password")
@@ -1056,11 +1151,12 @@ router.post("/login",upload.none(), async (req, res) => {
     const user = await userModel.findOne({
       $or: [
         { email: identifier },
-        { username: identifier }
+        { accountId: identifier }
       ]
     }).select('+password');
-      if (!user) {
-        let response = error("incorrect credentials");
+
+      if (!user || !user.password) {
+        let response = error("your email or password is incorrect");
         return res.json(response);
     }
     // Verify password
@@ -1071,12 +1167,12 @@ router.post("/login",upload.none(), async (req, res) => {
     }
 
 
-    if (!user.isVerified) {
-      let response = error("Please verify your email first");
-      return res.json(response);
-    }
+    // if (!user.isVerified) {
+    //   let response = error("Please verify your email first");
+    //   return res.json(response);
+    // }
     
-    console.log("user",user);
+   // console.log("user",user);
     createSendToken(user, res);
  
 });

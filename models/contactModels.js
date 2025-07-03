@@ -39,6 +39,10 @@ const contactSchema = new mongoose.Schema({
     type: [String],
     default:""
   },
+  zipcode:{
+    type:Number,
+    default:""
+  },
   desiredDate:{
     type:Date,
     default:null
