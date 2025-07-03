@@ -165,7 +165,7 @@ Request Product Type: ${product}
   const command = new PublishCommand({
       Message: snsMessage,
       Subject: "OST Infinity Platform Contact Us Submission",
-      TopicArn: process.env.arn // Make sure this is set in your .env
+      TopicArn: process.env.arn 
   });
 
     try{
