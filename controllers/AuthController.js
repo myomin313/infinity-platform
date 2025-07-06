@@ -36,6 +36,8 @@ const snsClient = new SNSClient({
   }
 });
 
+
+
 // const transporter = nodemailer.createTransport({
 //   host: "smtp.office365.com",        // Outlook SMTP server
 //   port: 587,                         // TLS port
@@ -405,10 +407,6 @@ router.post('/account-recovery-id', uploadFile.array('files'), async (req, res) 
     Addition Details: ${updatedRecovery.additionalDetails}
     files: ${fileLinks}
     `;
-
-
-
-     
       console.log("process env arn", process.env.arn);
         // Publish to SNS
       const command = new PublishCommand({
@@ -416,8 +414,6 @@ router.post('/account-recovery-id', uploadFile.array('files'), async (req, res) 
           Subject: "OST Infinity Platform Recovery Submission",
           TopicArn: process.env.arn // Make sure this is set in your .env
       });
-
-
         try{
              await snsClient.send(command);
              console.log("success in mail send")
@@ -462,15 +458,83 @@ router.post('/feedback', async (req, res) => {
       challengeDetail: req.body.challengeDetail,
       intuitive: req.body.intuitive || null,
       lookingFor: req.body.lookingFor || null,
-      searchingFor: req.body.searchingFor,
+      searchFor: req.body.searchFor,
       feel: req.body.feel,
       like: req.body.like,
       recommend: req.body.recommend || null,
       toImprove:req.body.toImprove,
-      missing:req.body.missing,
+      missingFeature:req.body.missingFeature,
       participate :req.body.participate || null,
+      location:req.body.location,
       submittedAt: new Date()
     });
+
+
+    //start
+     const snsMessage = `
+    Recovery Account Feedback Submission:
+
+    account Id:
+    ${req.body.accountId}
+    Which best describes you?: 
+    ${req.body.selectedDescribeItems}
+    Age:
+    ${ req.body.age}
+    Gender : 
+    ${req.body.gender}
+    Location:
+    ${req.body.location}
+    How would you rate your overall experience with ViXa Platform ?
+    ${req.body.experience}
+    How easy was it to complete your goal today ?
+    ${req.body.goal}
+    Did you encounter any challenges while using ViXA Platform ?
+    ${req.body.challenge}
+    Challenge Details:
+     ${req.body.challengeDetail}
+    How intuitive was the layout/menu structure ?
+     ${req.body.intuitive}
+    Where you able to find what you ware looking for?
+    ${req.body.lookingFor}
+    If not,what were you searching for ?
+    ${req.body.searchFor}
+    How did using ViXa Platform make you feel?
+    ${req.body.feel}
+    What did you like most / least ?
+    ${req.body.like}
+    How likely are you to recommend ViXa Platform to others ?
+    ${req.body.recommend}
+    What's one thing we could improve?
+    ${req.body.toImprove}
+    Is there a feature you are missing?
+    ${req.body.missingFeature}
+    Would you like to participate in future research ?
+    ${req.body.participate}
+    `;
+
+
+
+     
+      console.log("process env arn", process.env.arn);
+        // Publish to SNS
+      const command = new PublishCommand({
+          Message: snsMessage,
+          Subject: "OST Infinity Platform Feedback Submission",
+          TopicArn: process.env.feedback_arn // Make sure this is set in your .env
+      });
+
+
+        try{
+             await snsClient.send(command);
+             console.log("success in mail send")
+          } catch (err) {
+               console.log(err.message);
+          const response = error(err);
+          return res.json(response);
+        }
+
+  
+    //end
     await newFeedback.save();
     const response  = success("Feedback submitted successfully",{
       newFeedback

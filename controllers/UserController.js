@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const { checkRequiredFields } = require("../commonFunctions/validate");
+const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
 const userModel = require('../models/userModels');
 const feedbackModel = require('../models/feedbackModel');
 const {
@@ -15,6 +16,14 @@ const {
   notFound
 } = require("../commonFunctions/response");
 const authenticateToken = require('../commonFunctions/authenticateToken');
+
+const snsClient = new SNSClient({
+  region: process.env.sns_region,
+  credentials: {
+    accessKeyId: process.env.sns_accessKeyId,
+    secretAccessKey: process.env.sns_secretAccessKey
+  }
+});
 
 const {
   generateRandomSixDigitNumber,
@@ -772,6 +781,63 @@ router.post('/feedback', async (req, res) => {
  
    
     await newFeedback.save();
+
+
+     //start
+         const snsMessage = `
+        User Sign Up  Feedback Submission:
+    
+       
+        Which best describes you?: 
+        ${req.body.selectedDescribeItems}
+        Scoring rate:
+        ${ req.body.score}
+        Location:
+        ${req.body.location}
+        How would you rate your overall experience with registration ?
+        ${req.body.experience}
+        How easy was it to complete the form ?
+        ${req.body.ease}
+        Did you encounter any challenges while registration?
+        ${req.body.challenge}
+        Challenge Details:
+         ${req.body.challengeDetails}
+        How intuitive was the layout/menu structure ?
+         ${req.body.intuitive}
+        What did you like most/least ?
+        ${req.body.like}
+        How likely are you to recommend ViXa Platform to others ?
+        ${req.body.recommend}
+        What's one thing we could improve ?
+        ${req.body.toImprove}
+        Is there a feature you are missing?
+        ${req.body.missing}
+        Would you like to participate in future research ?
+        ${req.body.participate}
+        `;
+    
+    
+    
+         
+          console.log("process env arn", process.env.arn);
+            // Publish to SNS
+          const command = new PublishCommand({
+              Message: snsMessage,
+              Subject: "OST Infinity Platform Feedback Submission",
+              TopicArn: process.env.feedback_arn // Make sure this is set in your .env
+          });
+    
+    
+            try{
+                 await snsClient.send(command);
+                 console.log("success in mail send")
+              } catch (err) {
+                   console.log(err.message);
+              const response = error(err);
+              return res.json(response);
+            }
+    
+            
 
 
     const response  = success("Feedback submitted successfully",{
