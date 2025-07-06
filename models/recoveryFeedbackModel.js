@@ -38,7 +38,7 @@ const recoveryfeedbackSchema = new mongoose.Schema({
     enum: ['yes', 'no'],
     default:null
   },
-  searchingFor: String,
+  searchFor: String,
   feel: String,
   like: String,
   recommend: {
@@ -48,7 +48,7 @@ const recoveryfeedbackSchema = new mongoose.Schema({
     default:null
   },
   toImprove:String,
-  missing:String,
+  missingFeature:String,
   participate: {
     type: String,
     enum: ['yes', 'no'],
