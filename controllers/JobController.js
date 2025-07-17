@@ -122,12 +122,12 @@ function generateRequisitionId() {
  */
 
 
-router.post("/create",authenticateToken,upload.none(), async (req, res) => {
- 
+router.post("/create", authenticateToken, upload.none(), async (req, res) => {
+
   try {
     console.log("job module", req.body);
 
-    let isRequired = checkRequiredFields(["title","workArea", "to_do", "to_bring"], req.body);
+    let isRequired = checkRequiredFields(["title", "workArea", "to_do", "to_bring"], req.body);
 
     if (isRequired) {
       console.log("send required fields response");
@@ -145,22 +145,22 @@ router.post("/create",authenticateToken,upload.none(), async (req, res) => {
       let expectedTravel = req.body.expectedTravel;
       let location = req.body.location;
 
-        let newJob = new jobModel({
-                        title: title,
-                        toDo:toDo,
-                        toBring:toBring,
-                        offer:offer,
-                        requisitionId:requisitionId,
-                        workArea:workArea,
-                        careerStatus:careerStatus,
-                        employmentType:employmentType,
-                        expectedTravel:expectedTravel,
-                        location:location
-                      });
-      
-        let result = await newJob.save(); 
-        const response = success("your job  is successfully created", newJob);
-       return res.json(response);
+      let newJob = new jobModel({
+        title: title,
+        toDo: toDo,
+        toBring: toBring,
+        offer: offer,
+        requisitionId: requisitionId,
+        workArea: workArea,
+        careerStatus: careerStatus,
+        employmentType: employmentType,
+        expectedTravel: expectedTravel,
+        location: location
+      });
+
+      let result = await newJob.save();
+      const response = success("your job  is successfully created", newJob);
+      return res.json(response);
     }
   } catch (err) {
     console.log({ err });
@@ -170,20 +170,20 @@ router.post("/create",authenticateToken,upload.none(), async (req, res) => {
 });
 
 
-router.get("/", authenticateToken,async (req, res) => {
- try {
-     const jobs = await jobModel.find({ isActive: true }); 
+router.get("/", async (req, res) => {
+  try {
+    const jobs = await jobModel.find({ isActive: true });
     const response = success("your jobs are here", jobs);
     return res.json(response);
   } catch (err) {
-   const response = error("error",err)
-      return res.json(response);  
+    const response = error("error", err)
+    return res.json(response);
   }
 });
 
 
 
-router.get("/detail/:id",authenticateToken, async (req, res) => {
+router.get("/detail/:id", async (req, res) => {
   const jobId = req.params.id;
 
   try {
@@ -194,10 +194,10 @@ router.get("/detail/:id",authenticateToken, async (req, res) => {
       const response = error("Job not found");
       return res.json(response);
     }
-     const response =  success("Job detail retrieved", job);
-      return res.json(response);
+    const response = success("Job detail retrieved", job);
+    return res.json(response);
   } catch (err) {
-     const response = error("Job not found");
+    const response = error("Job not found");
     return res.json(response);
   }
 });
