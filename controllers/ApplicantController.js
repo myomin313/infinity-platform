@@ -40,8 +40,8 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: process.env.sendMail,
-    pass: process.env.sendMailPass, // Secure this in .env
+    user: process.env.EMAIL_SENDER,
+    pass: process.env.EMAIL_PASSWORD, // Secure this in .env
   },
   tls: {
     ciphers: 'SSLv3'
@@ -163,38 +163,41 @@ const transporter = nodemailer.createTransport({
  */
 
 // ========== Endpoint ==========
-router.post("/",authenticateToken,upload.array("documents"), async (req, res) => {
+router.post("/", upload.array("documents"), async (req, res) => {
   try {
-    let isRequired = checkRequiredFields(["jobId","salutation", "firstName", "surname","country",
-        "postcode","city","street","house","dob","email","emailRepeat","telephone","authorizedToWork",
-        "requiredVisa","accessPersonalData","currentWorkingOstGroup","privacyPolicy"], req.body);
+    let isRequired = checkRequiredFields(["jobId", "salutation", "firstName", "surname", "country",
+      "postcode", "city", "street", "house", "dob", "email", "emailRepeat", "telephone", "authorizedToWork",
+      "requiredVisa", "accessPersonalData", "currentWorkingOstGroup", "privacyPolicy"], req.body);
+    if(!!isRequired) {
+      return res.status(400).json({ error: "Required fields are missing" });
+    }
     const {
-      jobId,salutation, title, firstName, surname, surnameTitle,
+      jobId, salutation, title, firstName, surname, surnameTitle,
       country, postcode, city, street, house,
-      dob, email, emailRepeat, telephone,authorizedToWork,requiredVisa,
-      accessPersonalData,currentWorkingOstGroup
+      dob, email, emailRepeat, telephone, authorizedToWork, requiredVisa,
+      accessPersonalData, currentWorkingOstGroup
     } = req.body;
     // Check email match
     if (email !== emailRepeat) {
       return res.status(400).json({ error: "Emails do not match" });
     }
     // Prepare documents array
-     const documentUrls = req.files.map(file => 
+    const documentUrls = req.files.map(file =>
       `/uploads/job-applications/${file.filename}`
     );
     // Save to MongoDB
     const application = new applicantModel({
-      jobId,salutation, title, firstName, surname, surnameTitle,
+      jobId, salutation, title, firstName, surname, surnameTitle,
       country, postcode, city, street, house,
       dob: new Date(dob),
-      email, telephone,authorizedToWork,requiredVisa,accessPersonalData,currentWorkingOstGroup,
+      email, telephone, authorizedToWork, requiredVisa, accessPersonalData, currentWorkingOstGroup,
       file_url: documentUrls
     });
 
     await application.save();
 
     // Prepare email to HR
-    const hrEmail = "myomin313@gmail.com";
+    const hrEmail = "hr@ostinfinity.net";
     const mailOptions = {
       from: '"OST Careers" <donotreply@ostinfinity.net>',
       to: hrEmail,
