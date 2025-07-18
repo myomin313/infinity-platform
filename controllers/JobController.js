@@ -172,7 +172,7 @@ router.post("/create", authenticateToken, upload.none(), async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const jobs = await jobModel.find({ isActive: true });
+    const jobs = await jobModel.find({ "title": { "$regex": req.query.title || "", "$options": "i" }, isActive: true });
     const response = success("your jobs are here", jobs);
     return res.json(response);
   } catch (err) {
