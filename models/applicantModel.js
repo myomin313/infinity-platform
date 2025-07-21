@@ -62,6 +62,7 @@ const applicantModelSchema = new mongoose.Schema({
     required: true
   },
   file_url: [{ type: String }],
+  fileDescription: [{ type: String }],
   requiredVisa: {
     type: String,
     required: true
