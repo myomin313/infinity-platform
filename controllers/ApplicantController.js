@@ -175,7 +175,11 @@ router.post("/", upload.array("documents"), async (req, res) => {
       jobId, salutation, title, firstName, surname, surnameTitle,
       country, postcode, city, street, house,
       dob, email, emailRepeat, telephone, authorizedToWork, requiredVisa,
+<<<<<<< HEAD
       accessPersonalData, currentWorkingOstGroup
+=======
+      accessPersonalData, currentWorkingOstGroup,fileDescriptions
+>>>>>>> 6ae79c3 (add filedescriptions)
     } = req.body;
     // Check email match
     if (email !== emailRepeat) {
@@ -191,7 +195,8 @@ router.post("/", upload.array("documents"), async (req, res) => {
       country, postcode, city, street, house,
       dob: new Date(dob),
       email, telephone, authorizedToWork, requiredVisa, accessPersonalData, currentWorkingOstGroup,
-      file_url: documentUrls
+      file_url: documentUrls,fileDescription:fileDescriptions
+
     });
 
     await application.save();
