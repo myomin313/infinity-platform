@@ -1,0 +1,74 @@
+pipeline {
+  agent any
+
+  environment {
+    BRANCH = "test"
+    DEPLOY_USER = "jenkins"  // Replace if needed
+    TARGET_DIR = "/var/www/html/test/ost-platform-api"
+    DEPLOY_HOST = "31.97.125.9"
+  }
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+  }
+
+  stages {
+
+    stage('📥 Checkout from GitLab') {
+      steps {
+        echo "Checking out '${BRANCH}' branch from GitLab..."
+        git branch: "${BRANCH}",
+            credentialsId: 'gitlab-ssh',
+            url: 'git@gitlab.com:myominost/ost-platform-api.git'
+      }
+    }
+
+    stage('🔧 Build API') {
+      steps {
+        echo "Running build for TEST environment..."
+        sh '''
+          npm install
+          npm run build
+        '''
+      }
+    }
+
+    stage('🚀 Deploy to Server') {
+      steps {
+        echo "Deploying to ${DEPLOY_HOST}:${TARGET_DIR}..."
+
+        sshagent(['deploy-key']) {
+          sh """
+            rsync -avz --delete ./build/ ${DEPLOY_USER}@${DEPLOY_HOST}:${TARGET_DIR}
+          """
+        }
+      }
+    }
+
+    // Notifications are optional and safe to leave commented
+    // stage('📣 Notify on Success') {
+    //   steps {
+    //     script {
+    //       def msg = "✅ ost-platform-api deployed to TEST.\nBranch: ${BRANCH}\nHost: ${DEPLOY_HOST}\nBuild: ${env.BUILD_URL}"
+    //       slackSend(channel: '#deployments', message: msg)
+    //       mail to: 'dev@company.com',
+    //            subject: "✅ API Deployment to TEST Successful",
+    //            body: msg
+    //     }
+    //   }
+    // }
+  }
+
+  // post {
+  //   failure {
+  //     script {
+  //       def errorMsg = "❌ API deployment to TEST failed.\nCheck: ${env.BUILD_URL}"
+  //       slackSend(channel: '#deployments', message: errorMsg)
+  //       mail to: 'dev@company.com',
+  //            subject: "❌ API Deployment FAILED: TEST",
+  //            body: errorMsg
+  //     }
+  //   }
+  // }
+}
