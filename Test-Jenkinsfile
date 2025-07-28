@@ -3,7 +3,7 @@ pipeline {
 
   environment {
     BRANCH = "test"
-    DEPLOY_USER = "jenkins"  // Replace if needed
+    DEPLOY_USER = "jenkins"  // Update if different
     TARGET_DIR = "/var/www/html/test/ost-platform-api"
     DEPLOY_HOST = "31.97.125.9"
   }
@@ -29,18 +29,28 @@ pipeline {
         echo "Running build for TEST environment..."
         sh '''
           npm install
-          pm2 restart app.js
+          npm run build || echo "No build step defined"
         '''
       }
     }
 
     stage('🚀 Deploy to Server') {
       steps {
-        echo "Deploying to ${DEPLOY_HOST}:${TARGET_DIR}..."
+        echo "Deploying to ${DEPLOY_HOST}:${TARGET_DIR} and restarting app..."
 
         sshagent(['deploy-key']) {
           sh """
-            rsync -avz --delete ./build/ ${DEPLOY_USER}@${DEPLOY_HOST}:${TARGET_DIR}
+            rsync -avz --delete ./ ${DEPLOY_USER}@${DEPLOY_HOST}:${TARGET_DIR}
+
+            ssh ${DEPLOY_USER}@${DEPLOY_HOST} '
+              cd ${TARGET_DIR} &&
+              if pm2 describe ost-api > /dev/null; then
+                pm2 reload ost-api
+              else
+                pm2 start app.js --name ost-api
+              fi &&
+              pm2 save
+            '
           """
         }
       }
