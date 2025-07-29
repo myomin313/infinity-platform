@@ -194,12 +194,9 @@ let info = await transporter.sendMail({
    
    }
 }
-
-
-
 const signToken = id => {
   return jwt.sign({ id },process.env.JWT_SECRET, {
-    expiresIn: 300
+    expiresIn: '1h'
   });
 };
 const saltRounds = 10;
@@ -1058,12 +1055,11 @@ router.post('/delete',authenticateToken,upload.none(), async (req, res) => {
     } 
 
     const  userIds  = req.body.userIds;
-    const token =  req.body.resigninkey; // Expecting: { userIds: ["id1", "id2", "id3"] }
+    const token =  req.body.resigninkey; 
     let valid =await verifyJwtToken(token);
     if (valid) {
 
     if (userIds.length === 0) {
-     // console.log("userIds.length",Array.isArray(userIds));
       const  response = error("No user IDs provided");
       return res.json(response);
     }
@@ -1201,6 +1197,161 @@ router.post('/suspend-multiple',authenticateToken,async (req, res) => {
     return res.json(response)
    }
 });
+
+router.get('/',authenticateToken,async(req,res) => {
+   
+  try{
+   const users = await userModel.find();
+    const response = success("user list",users);
+    return res.json(response);
+  }catch(err){
+     const response = error("error",err);
+     return res.json(response);
+  }
+
+});
+
+// DELETE /api/users
+router.post('/admin/delete', authenticateToken, upload.none(), async (req, res) => {
+  try {
+    let ids = req.body.userIds; // ✅ use `let` instead of `const`
+    console.log("ids",ids);
+    if (typeof ids === 'string' && ids.includes(',')) {
+      // If comma-separated string
+      ids = ids.split(',').map(id => id.trim());
+    } else if (typeof ids === 'string') {
+      // If single string
+      ids = [ids];
+    }
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: 'No user IDs provided' });
+    }
+
+    console.log("ids ....", ids);
+
+    const result = await userModel.deleteMany({ _id: { $in: ids } });
+
+    const response = success("Users deleted successfully", {
+      deletedCount: result.deletedCount,
+      deletedIds: ids
+    });
+    return res.json(response);
+
+  } catch (err) {
+    const response = error("Deletion failed", err.message);
+    return res.status(500).json(response);
+  }
+});
+
+
+
+router.post("/create",authenticateToken,upload.none(),async (req, res) => {
+     console.log("hello",req.body);
+  try {
+    let isRequired = checkRequiredFields(["userName"], req.body);
+    
+    if (isRequired) {
+      console.log("send required fields response",isRequired);
+      let response = requiredParams(isRequired);
+      console.log("response",response);
+      return res.json(response);
+    } else {
+
+      
+      let email = req.body.userName;
+      let consoleAccess = req.body.consoleAccess;
+
+      const isValid =isValidEmail(email);
+     
+      
+      if (isValid) {
+           
+      let isEmailExist = await userModel
+                 .findOne({ email: email })
+                 .exec();
+        console.log({ isEmailExist });
+        if (isEmailExist) {
+          console.log("conflict email");
+         const response = conflict(email)
+          return res.json(response);
+        } else {
+            let newUser = new userModel({
+                email: email,
+                consoleAccess:consoleAccess
+            });
+            let result = await newUser.save(); 
+            console.log("result",result);
+            console.log("result_id", result._id);
+            const  createdUserId = result._id;
+            let response = success("new user created", {
+                  createdUserId, 
+                  email
+            });
+           return res.json(response);
+          }
+        
+      } else {
+        console.log("invalid part called");
+        let response = invalidEmail();
+        console.log("response",response);
+        return res.json(response);
+      }
+
+
+    }
+  } catch (err) {
+    console.log({ err });
+    //let response = internalError();
+    const response =  error("error")
+    return res.json(response);
+  }
+});
+
+
+router.post("/set-permission",authenticateToken,upload.none(),async (req, res) => {
+     console.log("hello",req.body);
+  try {
+    let isRequired = checkRequiredFields(["id","permission"], req.body);
+    
+    if (isRequired) {
+      console.log("send required fields response",isRequired);
+      let response = requiredParams(isRequired);
+      return res.json(response);
+    } else {
+
+      
+      let permission = JSON.parse(req.body.permission);;
+      let id = req.body.id;
+
+    //  const isValid =isValidEmail(email);
+        // const response = error("Email is already exit")
+        //   return res.json(response);
+     
+      const updatedUser = await userModel.findByIdAndUpdate(
+        id,
+        { permission: permission },
+        { new: true }
+      );
+      const response = success("successfully add permission",{
+       permission
+     })
+      return res.json(response); 
+    }
+  } catch (err) {
+    console.log({ err });
+    //let response = internalError();
+    const response =  error("error")
+    return res.json(response);
+  }
+});
+
+
+
+
+
+
+
 
 
 router.post("/login",upload.none(), async (req, res) => {

@@ -76,6 +76,9 @@ const userSchema = new mongoose.Schema({
   role:{
     type:String,
   },
+  permission:{
+    type:[String],
+  },
   enabled:{
     type:Boolean,
     default:false,
@@ -120,6 +123,10 @@ const userSchema = new mongoose.Schema({
     type:Boolean,
     default:false,
   },
+  consoleAccess:{
+    type:Boolean,
+    default:false,
+  },
   sourceCode:{
     type:Boolean,
     default:false,
@@ -134,6 +141,8 @@ const userSchema = new mongoose.Schema({
  },
  resetPasswordToken:String,
  resetPasswordExpire: Date,
+ mfa:String,
+ path:String,
  suspended: {
   type: Boolean,
   default: false,

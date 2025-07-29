@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const config = require('./config');
 const mongoose = require('mongoose');
 const http = require('http');
 const https = require('https');
@@ -116,6 +117,7 @@ app.use(async (req, res, next) => {
 // Routes
 
 app.use('/', router);
+
 // router.get('/', (req, res) => res.json({ 
 //   status: 'OST API Running',
 //   dbState: mongoose.connection.readyState 
