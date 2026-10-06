@@ -19,6 +19,9 @@ const ApplicantController = require('./controllers/ApplicantController');
 const PaymentController = require('./controllers/paymentController');
 const ContactUsController = require('./controllers/ContactUsController');
 const CaptchaController = require('./controllers/CaptchaController');
+const PermissionController = require('./controllers/PermissionController');
+const PolicyController = require('./controllers/PolicyController');
+const GroupController = require('./controllers/GroupController');
 // Initialize Express
 const app = express();
 const router = express.Router();
@@ -138,6 +141,9 @@ app.use('/apply',ApplicantController);
 app.use('/payment',PaymentController);
 app.use('/contact-us',ContactUsController);
 app.use('/captcha',CaptchaController);
+app.use('/permission',PermissionController);
+app.use('/policy',PolicyController);
+app.use('/group',GroupController);
 // Error Handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
